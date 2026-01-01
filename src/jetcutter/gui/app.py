@@ -59,7 +59,7 @@ def load_config() -> tuple:
 def main() -> int:
     """GUIアプリケーションのメインエントリ"""
     try:
-        import PySimpleGUI as sg
+        import PySimpleGUI4 as sg
     except ImportError:
         print("Error: PySimpleGUI4 is not installed.")
         print("Please install it with: pip install PySimpleGUI4")

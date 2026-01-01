@@ -16,7 +16,7 @@ from jetcutter.core.processor import process_audio as core_process_audio
 from jetcutter.gui.constants import EVENT_CANCELLED, EVENT_COMPLETE, EVENT_ERROR, EVENT_STAGE
 
 if TYPE_CHECKING:
-    import PySimpleGUI as sg
+    import PySimpleGUI4 as sg
 
 
 class GUIProgressCallback:

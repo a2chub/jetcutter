@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import PySimpleGUI as sg
+import PySimpleGUI4 as sg
 
 from jetcutter.config.settings import AppConfig
 from jetcutter.gui.constants import (

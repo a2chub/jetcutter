@@ -91,6 +91,7 @@ module = [
     "ffmpeg.*",
     "faster_whisper.*",
     "PySimpleGUI.*",
+    "PySimpleGUI4.*",
 ]
 ignore_missing_imports = true
 

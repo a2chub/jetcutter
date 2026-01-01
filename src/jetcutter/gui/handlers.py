@@ -28,7 +28,7 @@ from jetcutter.gui.constants import (
 from jetcutter.gui.processing import BackgroundProcessor
 
 if TYPE_CHECKING:
-    import PySimpleGUI as sg
+    import PySimpleGUI4 as sg
 
 
 def format_time(ms: int) -> str:
@@ -65,7 +65,7 @@ class EventHandler:
         Returns:
             Trueで継続、Falseで終了
         """
-        import PySimpleGUI as sg
+        import PySimpleGUI4 as sg
 
         if event == sg.WIN_CLOSED:
             return False
@@ -98,7 +98,7 @@ class EventHandler:
 
     def _handle_start(self, values: dict[str, Any]) -> None:
         """処理開始"""
-        import PySimpleGUI as sg
+        import PySimpleGUI4 as sg
 
         # 入力検証
         video_path_str = values.get("-VIDEO-PATH-", "")
@@ -151,7 +151,7 @@ class EventHandler:
 
     def _handle_complete(self, data: dict[str, Any]) -> None:
         """処理完了"""
-        import PySimpleGUI as sg
+        import PySimpleGUI4 as sg
 
         self._set_processing_ui(False)
         self._window["-PROGRESS-BAR-"].update(100)
@@ -186,7 +186,7 @@ class EventHandler:
 
     def _handle_error(self, error_msg: str) -> None:
         """エラー発生"""
-        import PySimpleGUI as sg
+        import PySimpleGUI4 as sg
 
         self._set_processing_ui(False)
         sg.popup_error(f"処理中にエラーが発生しました:\n\n{error_msg}", title="エラー")
@@ -195,7 +195,7 @@ class EventHandler:
 
     def _handle_cancelled(self) -> None:
         """キャンセル完了"""
-        import PySimpleGUI as sg
+        import PySimpleGUI4 as sg
 
         self._set_processing_ui(False)
         sg.popup_ok("処理がキャンセルされました", title="キャンセル")
@@ -204,7 +204,7 @@ class EventHandler:
 
     def _handle_save_settings(self, values: dict[str, Any]) -> None:
         """設定を保存"""
-        import PySimpleGUI as sg
+        import PySimpleGUI4 as sg
 
         try:
             self._update_config_from_values(values)
@@ -215,7 +215,7 @@ class EventHandler:
 
     def _handle_load_defaults(self) -> None:
         """デフォルト設定に戻す"""
-        import PySimpleGUI as sg
+        import PySimpleGUI4 as sg
 
         self._config = AppConfig()
         self._update_settings_ui()
