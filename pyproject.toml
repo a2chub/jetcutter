@@ -37,9 +37,15 @@ dev = [
     "mypy>=1.5.0",
     "types-PyYAML>=6.0.0",
 ]
+gui = [
+    "PySimpleGUI4>=4.60.0",
+]
 
 [project.scripts]
 jetcutter = "jetcutter.main:app"
+
+[project.gui-scripts]
+jetcutter-gui = "jetcutter.gui.app:main"
 
 [build-system]
 requires = ["hatchling"]
@@ -84,6 +90,7 @@ module = [
     "pydub.*",
     "ffmpeg.*",
     "faster_whisper.*",
+    "PySimpleGUI.*",
 ]
 ignore_missing_imports = true
 

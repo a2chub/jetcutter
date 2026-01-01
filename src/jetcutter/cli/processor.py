@@ -1,33 +1,57 @@
 """
-processor - 音声処理パイプライン
+processor - CLI用音声処理ラッパー
 
-音声抽出、無音検知、フィラー検知の統合処理を提供。
+Rich Progressを使用したCLI向けのプログレス表示を提供。
+コア処理ロジックはjetcutter.coreを使用。
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 from pathlib import Path
 
 from rich.console import Console
-from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.progress import Progress, SpinnerColumn, TaskID, TextColumn
 
 from jetcutter.config.settings import AppConfig
-from jetcutter.editor.segment import Segment
+from jetcutter.core.callbacks import ProgressCallback
+from jetcutter.core.processor import AudioProcessingResult
+from jetcutter.core.processor import process_audio as core_process_audio
 
 console = Console()
 
+# Re-export for backward compatibility
+__all__ = ["AudioProcessingResult", "process_audio"]
 
-@dataclass
-class AudioProcessingResult:
-    """音声処理の結果"""
 
-    silence_segments: list[Segment]
-    filler_segments: list[Segment]
-    keep_segments: list[Segment]
-    total_duration_ms: int
-    audio_path: Path
-    summary: dict[str, int | float] = field(default_factory=dict)
+class RichProgressCallback:
+    """
+    Rich Progressを使用するプログレスコールバック実装
+
+    CLI用のスピナー付きプログレス表示を提供。
+    """
+
+    def __init__(self, progress: Progress) -> None:
+        self._progress = progress
+        self._current_task: TaskID | None = None
+        self._cancelled = False
+
+    def on_stage_start(self, stage: str) -> None:
+        """新しいステージを開始（スピナー表示）"""
+        self._current_task = self._progress.add_task(stage, total=None)
+
+    def on_stage_complete(self, stage: str) -> None:
+        """ステージを完了としてマーク"""
+        if self._current_task is not None:
+            self._progress.update(self._current_task, completed=True)
+            self._current_task = None
+
+    def is_cancelled(self) -> bool:
+        """キャンセル状態を返す"""
+        return self._cancelled
+
+    def cancel(self) -> None:
+        """処理をキャンセル"""
+        self._cancelled = True
 
 
 def process_audio(
@@ -37,7 +61,7 @@ def process_audio(
     cleanup_files: list[Path] | None = None,
 ) -> AudioProcessingResult:
     """
-    動画から音声を抽出し、無音・フィラー検知を実行する
+    動画から音声を抽出し、無音・フィラー検知を実行する（CLI用ラッパー）
 
     Args:
         video_path: 動画ファイルパス
@@ -53,78 +77,14 @@ def process_audio(
         SilenceDetectionError: 無音検知に失敗
         TranscriptionError: 文字起こしに失敗
     """
-    from jetcutter.audio.analyzer import SilenceAnalyzer
-    from jetcutter.audio.extractor import AudioExtractor
-    from jetcutter.editor.merger import SegmentMerger
-    from jetcutter.speech.filler_detector import FillerDetector
-    from jetcutter.speech.transcriber import Transcriber
 
     def _process_with_progress(prog: Progress) -> AudioProcessingResult:
-        # 1. 音声抽出
-        task = prog.add_task("Extracting audio...", total=None)
-        extractor = AudioExtractor()
-        audio_path = extractor.extract(video_path)
-        if cleanup_files is not None:
-            cleanup_files.append(audio_path)
-        prog.update(task, completed=True)
-
-        # 音声の長さを取得
-        analyzer = SilenceAnalyzer(
-            threshold_db=config.silence.threshold_db,
-            min_duration_ms=config.silence.min_duration_ms,
-        )
-        total_duration_ms = analyzer.get_audio_duration_ms(audio_path)
-
-        # 2. 無音検知
-        task = prog.add_task("Detecting silence...", total=None)
-        silence_segments = analyzer.detect_silence(audio_path)
-        prog.update(task, completed=True)
-
-        # 3. フィラー検知
-        task = prog.add_task("Detecting fillers...", total=None)
-        transcriber = Transcriber(
-            model_name=config.filler.model_name,
-            device=config.filler.device,
-            compute_type=config.filler.compute_type,
-            language=config.filler.language,
-        )
-        word_timestamps = transcriber.transcribe(audio_path)
-
-        filler_words = config.filler_words or []
-        detector = FillerDetector(filler_words=filler_words if filler_words else None)
-        filler_segments = detector.detect(word_timestamps)
-        prog.update(task, completed=True)
-
-        # 4. 保持区間算出
-        task = prog.add_task("Calculating keep segments...", total=None)
-        merger = SegmentMerger(
-            margin_before_ms=config.margin.before_ms,
-            margin_after_ms=config.margin.after_ms,
-            min_keep_duration_ms=config.min_keep_duration_ms,
-            fps=config.fps,
-        )
-        keep_segments = merger.calculate_keep_segments(
-            silence_segments,
-            filler_segments,
-            total_duration_ms,
-        )
-        prog.update(task, completed=True)
-
-        # サマリー計算
-        summary = merger.get_cut_summary(
-            silence_segments,
-            filler_segments,
-            keep_segments,
-            total_duration_ms,
-        )
-
-        return AudioProcessingResult(
-            silence_segments=silence_segments,
-            filler_segments=filler_segments,
-            keep_segments=keep_segments,
-            total_duration_ms=total_duration_ms,
-            audio_path=audio_path,
-            summary=summary,
+        callback = RichProgressCallback(prog)
+        return core_process_audio(
+            video_path=video_path,
+            config=config,
+            callback=callback,
+            cleanup_files=cleanup_files,
         )
 
     if progress is not None:
