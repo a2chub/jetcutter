@@ -59,9 +59,14 @@ def load_config() -> tuple:
 def main() -> int:
     """GUIアプリケーションのメインエントリ"""
     try:
+        # tkinterのサブモジュールを事前にインポート（PySimpleGUI4互換性のため）
+        import tkinter
+        import tkinter.filedialog
+        import tkinter.messagebox
+
         import PySimpleGUI4 as sg
-    except ImportError:
-        print("Error: PySimpleGUI4 is not installed.")
+    except ImportError as e:
+        print(f"Error: Required module not found: {e}")
         print("Please install it with: pip install PySimpleGUI4")
         return 1
 
