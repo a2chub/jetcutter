@@ -143,3 +143,13 @@ uv.lock
 
 # DaVinci Resolve project files
 *.drp
+
+# Video files (large files)
+*.mp4
+*.MP4
+*.mov
+*.MOV
+*.avi
+*.mkv
+examples/*.mp4
+examples/*.MP4
