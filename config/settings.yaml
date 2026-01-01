@@ -1,0 +1,28 @@
+# jetDR 設定ファイル
+# DaVinci Resolve 自動編集エージェント
+
+# 無音検知設定
+silence:
+  threshold_db: -40.0      # 無音判定しきい値（dBFS）
+  min_duration_ms: 300     # 最小無音期間（ミリ秒）
+
+# フィラー検知設定
+filler:
+  model_name: "large-v3"   # Whisperモデル名
+  language: "ja"           # 認識対象言語
+  device: "auto"           # 使用デバイス（auto, cuda, cpu）
+  compute_type: "int8"     # 計算精度（Apple Silicon向けに最適化）
+
+# カットマージン設定
+margin:
+  before_ms: 100           # 保持区間開始前のバッファ（ミリ秒）
+  after_ms: 100            # 保持区間終了後のバッファ（ミリ秒）
+
+# 出力設定
+output:
+  timeline_prefix: "JetCut_"   # タイムライン名のプレフィックス
+  create_backup: true          # 処理前にバックアップを作成
+
+# 一般設定
+fps: 29.97                     # デフォルトフレームレート
+min_keep_duration_ms: 500      # 最小保持区間長（ミリ秒）
