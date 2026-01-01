@@ -100,6 +100,10 @@ def main() -> int:
             if event == sg.TIMEOUT_KEY:
                 continue
 
+            # デバッグ: 重要なイベントをログ
+            if event and event.startswith("-") and event.endswith("-"):
+                print(f"[DEBUG] App loop event: {event}, has values: {event in values if values else False}")
+
             if not handler.handle(event, values):
                 break
 

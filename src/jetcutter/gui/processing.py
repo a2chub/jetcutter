@@ -100,6 +100,8 @@ class BackgroundProcessor:
         editor: str,
     ) -> None:
         """バックグラウンドワーカー"""
+        from loguru import logger
+        logger.info("[DEBUG] Worker started")
         cleanup_files: list[Path] = []
 
         try:
@@ -121,6 +123,7 @@ class BackgroundProcessor:
             )
 
             # 完了通知
+            logger.info(f"[DEBUG] Sending EVENT_COMPLETE with result: {len(result.keep_segments)} keep segments")
             self._window.write_event_value(
                 EVENT_COMPLETE,
                 {
@@ -128,6 +131,7 @@ class BackgroundProcessor:
                     "export_result": export_result,
                 },
             )
+            logger.info("[DEBUG] EVENT_COMPLETE sent")
 
         except ProcessingCancelledError:
             self._window.write_event_value(EVENT_CANCELLED, None)

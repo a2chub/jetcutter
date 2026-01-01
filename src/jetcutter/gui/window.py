@@ -87,7 +87,6 @@ def create_process_tab(config: AppConfig) -> list[list[sg.Element]]:
                 orientation="h",
                 size=(50, 20),
                 key="-PROGRESS-BAR-",
-                visible=False,
             ),
         ],
         [sg.Text("", key="-STATUS-TEXT-", size=(60, 1))],
@@ -208,6 +207,13 @@ def create_settings_tab(config: AppConfig) -> list[list[sg.Element]]:
 
 def create_results_tab() -> list[list[sg.Element]]:
     """結果タブのレイアウトを作成"""
+    # 読み取り専用Inputの共通設定
+    readonly_input = {
+        "readonly": True,
+        "text_color": "white",
+        "background_color": "#333333",
+    }
+
     return [
         [sg.Text("処理結果", font=("", 12, "bold"))],
         [sg.HorizontalSeparator()],
@@ -218,19 +224,19 @@ def create_results_tab() -> list[list[sg.Element]]:
                 [
                     [
                         sg.Text("総時間:", size=(10, 1)),
-                        sg.Text("--:--", key="-TOTAL-DURATION-", size=(10, 1)),
+                        sg.Input("--:--", key="-TOTAL-DURATION-", size=(12, 1), **readonly_input),
                         sg.Text("削減時間:", size=(10, 1)),
-                        sg.Text("--:--", key="-CUT-DURATION-", size=(10, 1)),
+                        sg.Input("--:--", key="-CUT-DURATION-", size=(12, 1), **readonly_input),
                         sg.Text("削減率:", size=(8, 1)),
-                        sg.Text("--%", key="-CUT-RATIO-", size=(8, 1)),
+                        sg.Input("--%", key="-CUT-RATIO-", size=(10, 1), **readonly_input),
                     ],
                     [
                         sg.Text("無音区間:", size=(10, 1)),
-                        sg.Text("0", key="-SILENCE-COUNT-", size=(10, 1)),
+                        sg.Input("0", key="-SILENCE-COUNT-", size=(12, 1), **readonly_input),
                         sg.Text("フィラー:", size=(10, 1)),
-                        sg.Text("0", key="-FILLER-COUNT-", size=(10, 1)),
+                        sg.Input("0", key="-FILLER-COUNT-", size=(12, 1), **readonly_input),
                         sg.Text("保持区間:", size=(8, 1)),
-                        sg.Text("0", key="-KEEP-COUNT-", size=(8, 1)),
+                        sg.Input("0", key="-KEEP-COUNT-", size=(10, 1), **readonly_input),
                     ],
                 ],
                 expand_x=True,

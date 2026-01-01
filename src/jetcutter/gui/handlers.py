@@ -66,6 +66,11 @@ class EventHandler:
             Trueで継続、Falseで終了
         """
         import PySimpleGUI4 as sg
+        from loguru import logger
+
+        # デバッグ: すべてのイベントをログ（タイムアウト以外）
+        if event not in (sg.TIMEOUT_KEY, None):
+            logger.info(f"[DEBUG] Event received: {event}")
 
         if event == sg.WIN_CLOSED:
             return False
@@ -141,28 +146,43 @@ class EventHandler:
 
     def _handle_stage(self, stage: str) -> None:
         """ステージ更新"""
+        from loguru import logger
+
         # 日本語に変換
         stage_ja = STAGE_NAMES.get(stage, stage)
         self._window["-STATUS-TEXT-"].update(stage_ja)
 
-        # プログレスバー更新
+        # プログレスバー更新（直接Widget操作）
         progress = STAGE_PROGRESS.get(stage, 0)
-        self._window["-PROGRESS-BAR-"].update(progress)
+        self._update_progress_bar(progress)
+
+        # 明示的にウィンドウを更新
+        self._window.refresh()
+
+        logger.info(f"[DEBUG] Stage: {stage}, Progress: {progress}%")
 
     def _handle_complete(self, data: dict[str, Any]) -> None:
         """処理完了"""
         import PySimpleGUI4 as sg
+        from loguru import logger
+
+        logger.info("[DEBUG] _handle_complete called")
 
         self._set_processing_ui(False)
-        self._window["-PROGRESS-BAR-"].update(100)
+        self._update_progress_bar(100)
 
         result: AudioProcessingResult = data["result"]
         export_result: dict[str, Any] = data["export_result"]
+
+        logger.info(f"[DEBUG] result: {len(result.silence_segments)} silence, "
+                    f"{len(result.filler_segments)} filler, "
+                    f"{len(result.keep_segments)} keep")
 
         self._result = result
 
         # 結果タブを更新
         self._update_results_tab(result)
+        logger.info("[DEBUG] _update_results_tab completed")
 
         # 完了メッセージ
         if export_result.get("success"):
@@ -170,11 +190,17 @@ class EventHandler:
             if export_result.get("output_path"):
                 msg += f"\n\n出力先: {export_result['output_path']}"
             sg.popup_ok(msg, title="完了")
-            self._window["-STATUS-TEXT-"].update("完了")
+            self._window["-STATUS-TEXT-"].update("処理完了")
             self._window["-FOOTER-STATUS-"].update("Ready")
 
             # 結果タブに切り替え
-            self._window["-TAB-GROUP-"].Widget.select(2)  # 0-indexed
+            try:
+                # PySimpleGUI4ではTabGroupの内部Widgetを使用
+                tab_group = self._window["-TAB-GROUP-"]
+                tab_group.Widget.select(2)  # 0=処理, 1=設定, 2=結果
+                logger.info("[DEBUG] Tab switched to results")
+            except Exception as e:
+                logger.error(f"[DEBUG] Tab switch failed: {e}")
 
         else:
             sg.popup_error(
@@ -286,35 +312,70 @@ class EventHandler:
         self._window["-FPS-"].update(str(self._config.fps))
         self._window["-MIN-KEEP-MS-"].update(str(self._config.min_keep_duration_ms))
 
+    def _update_progress_bar(self, value: int) -> None:
+        """プログレスバーを直接Widget操作で更新"""
+        progress_elem = self._window["-PROGRESS-BAR-"]
+        widget = progress_elem.Widget
+        widget["value"] = value
+
     def _set_processing_ui(self, processing: bool) -> None:
         """処理中のUI状態を設定"""
         self._window[EVENT_START].update(visible=not processing)
         self._window[EVENT_CANCEL].update(visible=processing)
-        self._window["-PROGRESS-BAR-"].update(visible=processing, current_count=0)
+
+        if processing:
+            # 処理開始時: プログレスバーを0にリセット
+            self._update_progress_bar(0)
+            self._window["-STATUS-TEXT-"].update("処理を準備中...")
+        # else: 処理完了時はプログレスバーを100%のまま維持（_handle_completeで更新）
 
         # 入力要素を無効化/有効化
         self._window["-VIDEO-PATH-"].update(disabled=processing)
         self._window["-EDITOR-FCP-"].update(disabled=processing)
         self._window["-EDITOR-DAVINCI-"].update(disabled=processing)
 
+        self._window.refresh()
+
     def _update_results_tab(self, result: AudioProcessingResult) -> None:
         """結果タブを更新"""
+        from loguru import logger
+        logger.info("[DEBUG] _update_results_tab called")
+
+        # 要素の存在確認
+        for key in ["-TOTAL-DURATION-", "-CUT-DURATION-", "-CUT-RATIO-",
+                    "-SILENCE-COUNT-", "-FILLER-COUNT-", "-KEEP-COUNT-", "-SEGMENT-TABLE-"]:
+            elem = self._window[key]
+            logger.info(f"[DEBUG] Element {key}: type={type(elem).__name__}, widget={elem.Widget if hasattr(elem, 'Widget') else 'N/A'}")
+
         summary = result.summary
+        logger.info(f"[DEBUG] summary: {summary}")
 
-        # サマリー更新
-        self._window["-TOTAL-DURATION-"].update(
-            format_time(result.total_duration_ms)
-        )
+        # サマリー更新（readonly Inputは直接Widgetを操作）
+        def update_readonly_input(key: str, value: str) -> None:
+            """readonly Inputの値を更新"""
+            elem = self._window[key]
+            widget = elem.Widget
+            # readonlyを一時的に解除して値を設定
+            widget.config(state="normal")
+            widget.delete(0, "end")
+            widget.insert(0, value)
+            widget.config(state="readonly")
 
-        cut_ms = int(summary.get("total_cut_ms", 0))
-        self._window["-CUT-DURATION-"].update(format_time(cut_ms))
+        total_duration_str = format_time(result.total_duration_ms)
+        update_readonly_input("-TOTAL-DURATION-", total_duration_str)
+        logger.info(f"[DEBUG] total_duration updated: {total_duration_str}")
 
-        cut_ratio = summary.get("cut_ratio", 0)
-        self._window["-CUT-RATIO-"].update(f"{cut_ratio:.1f}%")
+        cut_ms = int(summary.get("cut_total_ms", 0))
+        cut_duration_str = format_time(cut_ms)
+        update_readonly_input("-CUT-DURATION-", cut_duration_str)
 
-        self._window["-SILENCE-COUNT-"].update(str(len(result.silence_segments)))
-        self._window["-FILLER-COUNT-"].update(str(len(result.filler_segments)))
-        self._window["-KEEP-COUNT-"].update(str(len(result.keep_segments)))
+        cut_ratio = summary.get("reduction_percent", 0)
+        cut_ratio_str = f"{cut_ratio:.1f}%"
+        update_readonly_input("-CUT-RATIO-", cut_ratio_str)
+
+        update_readonly_input("-SILENCE-COUNT-", str(len(result.silence_segments)))
+        update_readonly_input("-FILLER-COUNT-", str(len(result.filler_segments)))
+        update_readonly_input("-KEEP-COUNT-", str(len(result.keep_segments)))
 
         # セグメントテーブル更新
         table_data = []
@@ -336,4 +397,19 @@ class EventHandler:
                 format_time(seg.duration_ms),
             ])
 
-        self._window["-SEGMENT-TABLE-"].update(values=table_data)
+        # テーブル更新（Treeview Widgetを直接操作）
+        table_elem = self._window["-SEGMENT-TABLE-"]
+        treeview = table_elem.Widget
+
+        # 既存の項目をすべて削除
+        for item in treeview.get_children():
+            treeview.delete(item)
+
+        # 新しいデータを挿入（PySimpleGUI4が期待する数値形式のiidを指定）
+        for idx, row in enumerate(table_data):
+            treeview.insert("", "end", iid=str(idx + 1), values=row)
+
+        logger.info(f"[DEBUG] Table updated with {len(table_data)} rows via Treeview")
+
+        # 明示的にウィンドウを更新
+        self._window.refresh()
