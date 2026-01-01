@@ -1,5 +1,5 @@
 [project]
-name = "jetdr"
+name = "jetcutter"
 version = "0.1.0"
 description = "DaVinci Resolve / Final Cut Pro 自動編集エージェント - 無音区間・フィラー自動検知・削除ツール"
 readme = "README.md"
@@ -39,15 +39,14 @@ dev = [
 ]
 
 [project.scripts]
-jetdr = "jetdr.main:app"
-jetfcp = "jetfcp.main:app"
+jetcutter = "jetcutter.main:app"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/jetdr", "src/jetfcp"]
+packages = ["src/jetcutter"]
 
 [tool.ruff]
 line-length = 100
@@ -70,7 +69,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["jetdr", "jetfcp"]
+known-first-party = ["jetcutter"]
 
 [tool.mypy]
 python_version = "3.10"
@@ -90,4 +89,4 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-v --cov=jetdr --cov-report=term-missing"
+addopts = "-v --cov=jetcutter --cov-report=term-missing"

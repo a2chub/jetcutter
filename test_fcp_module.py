@@ -3,10 +3,10 @@
 
 from pathlib import Path
 
-from jetdr.editor.segment import Segment, SegmentType
-from jetdr.exporters.base import ExportConfig
-from jetdr.fcp import FCPExporter, FCPTime, FCPXMLBuilder
-from jetdr.fcp.time_utils import format_frame_duration, get_frame_duration
+from jetcutter.editor.segment import Segment, SegmentType
+from jetcutter.exporters.base import ExportConfig
+from jetcutter.fcp import FCPExporter, FCPTime, FCPXMLBuilder
+from jetcutter.fcp.time_utils import format_frame_duration, get_frame_duration
 
 
 def main():

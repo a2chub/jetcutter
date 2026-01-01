@@ -8,9 +8,9 @@ directly in DaVinci Resolve.
 from pathlib import Path
 
 # Note: These imports will work once the package is properly installed
-from jetdr.davinci.exporter import DaVinciExporter
-from jetdr.editor.segment import Segment, SegmentType
-from jetdr.exporters.base import ExportConfig
+from jetcutter.davinci.exporter import DaVinciExporter
+from jetcutter.editor.segment import Segment, SegmentType
+from jetcutter.exporters.base import ExportConfig
 
 
 def example_basic_usage():
@@ -104,7 +104,7 @@ def example_context_manager():
 def example_using_factory():
     """Example using the exporter factory pattern."""
 
-    from jetdr.exporters import create_exporter
+    from jetcutter.exporters import create_exporter
 
     # Create exporter using factory
     exporter = create_exporter("davinci")

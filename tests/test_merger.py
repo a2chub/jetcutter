@@ -2,8 +2,8 @@
 
 import pytest
 
-from jetdr.editor.merger import SegmentMerger, quick_merge
-from jetdr.editor.segment import Segment, SegmentType
+from jetcutter.editor.merger import SegmentMerger, quick_merge
+from jetcutter.editor.segment import Segment, SegmentType
 
 
 class TestSegmentMerger:

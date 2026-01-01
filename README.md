@@ -1,4 +1,4 @@
-# jetDR - 動画自動編集エージェント
+# JetCutter - 動画自動編集エージェント
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -29,8 +29,8 @@
 
 ```bash
 # リポジトリをクローン
-git clone https://github.com/yourusername/jetDR.git
-cd jetDR
+git clone https://github.com/yourusername/JetCutter.git
+cd JetCutter
 
 # 仮想環境を作成・有効化
 uv venv
@@ -46,7 +46,7 @@ uv pip install -e ".[dev]"
 
 ```bash
 # デフォルト設定ファイルを生成
-jetdr config init
+jetcutter config init
 ```
 
 `config/settings.yaml`でパラメータを調整できます：
@@ -71,72 +71,72 @@ fps: 29.97
 
 ```bash
 # DaVinci Resolveを起動した状態で実行
-jetdr process input.mp4
+jetcutter process input.mp4
 ```
 
 ### 3. バッチ処理
 
 ```bash
-jetdr batch ./videos --pattern "*.mp4"
+jetcutter batch ./videos --pattern "*.mp4"
 ```
 
 ## 使用方法
 
-### DaVinci Resolve用 (jetdr)
+### DaVinci Resolve用
 
 ```bash
 # 単一動画を処理
-jetdr process VIDEO_PATH [OPTIONS]
+jetcutter process VIDEO_PATH [OPTIONS]
 
 # 動画を解析（DRへの書き込みなし）
-jetdr analyze VIDEO_PATH [--format json|table]
+jetcutter analyze VIDEO_PATH [--format json|table]
 
 # バッチ処理
-jetdr batch FOLDER_PATH [OPTIONS]
+jetcutter batch FOLDER_PATH [OPTIONS]
 
 # 設定を表示
-jetdr config show
+jetcutter config show
 ```
 
-### Final Cut Pro用 (jetfcp)
+### Final Cut Pro用
 
 ```bash
 # 動画を処理してFCPXMLを生成
-jetfcp export VIDEO_PATH [OPTIONS]
+jetcutter export VIDEO_PATH [OPTIONS]
 
 # 動画を解析（FCPXML出力なし）
-jetfcp analyze VIDEO_PATH [--format json|table]
+jetcutter analyze VIDEO_PATH [--format json|table]
 
 # FCPXMLファイルを検証
-jetfcp validate FCPXML_PATH
+jetcutter validate FCPXML_PATH
 ```
 
 #### オプション
 
 ```bash
 # 出力ファイル名を指定
-jetfcp export input.mp4 -o output.fcpxml
+jetcutter export input.mp4 -o output.fcpxml
 
 # タイムライン名を指定
-jetfcp export input.mp4 -n "MyProject"
+jetcutter export input.mp4 -n "MyProject"
 
 # 設定ファイルを指定
-jetfcp export input.mp4 -c custom_settings.yaml
+jetcutter export input.mp4 -c custom_settings.yaml
 
 # 詳細ログを出力
-jetfcp export input.mp4 -V
+jetcutter export input.mp4 -V
 ```
 
 ### Pythonから使用
 
 ```python
-from jetdr.audio.extractor import AudioExtractor
-from jetdr.audio.analyzer import SilenceAnalyzer
-from jetdr.speech.transcriber import Transcriber
-from jetdr.speech.filler_detector import FillerDetector
-from jetdr.editor.merger import SegmentMerger
-from jetdr.davinci.connection import DRConnection
-from jetdr.davinci.timeline_builder import TimelineBuilder
+from jetcutter.audio.extractor import AudioExtractor
+from jetcutter.audio.analyzer import SilenceAnalyzer
+from jetcutter.speech.transcriber import Transcriber
+from jetcutter.speech.filler_detector import FillerDetector
+from jetcutter.editor.merger import SegmentMerger
+from jetcutter.davinci.connection import DRConnection
+from jetcutter.davinci.timeline_builder import TimelineBuilder
 
 # 音声抽出
 extractor = AudioExtractor()

@@ -1,5 +1,5 @@
-# jetDR 設定ファイル
-# DaVinci Resolve 自動編集エージェント
+# JetCutter 設定ファイル
+# 動画自動ジェットカット編集ツール
 
 # 無音検知設定
 silence:
@@ -20,6 +20,7 @@ margin:
 
 # 出力設定
 output:
+  default_editor: "fcp"        # デフォルトのターゲットエディタ (davinci, fcp)
   timeline_prefix: "JetCut_"   # タイムライン名のプレフィックス
   create_backup: true          # 処理前にバックアップを作成
 

@@ -6,7 +6,7 @@ from fractions import Fraction
 
 import pytest
 
-from jetdr.fcp.time_utils import (
+from jetcutter.fcp.time_utils import (
     FRAME_DURATIONS,
     FCPTime,
     format_frame_duration,

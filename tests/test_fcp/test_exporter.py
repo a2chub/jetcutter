@@ -7,9 +7,9 @@ from tempfile import TemporaryDirectory
 
 import pytest
 
-from jetdr.editor.segment import Segment, SegmentType
-from jetdr.exporters.base import ExportConfig
-from jetdr.fcp.exporter import FCPExporter, create_fcp_exporter
+from jetcutter.editor.segment import Segment, SegmentType
+from jetcutter.exporters.base import ExportConfig
+from jetcutter.fcp.exporter import FCPExporter, create_fcp_exporter
 
 
 class TestFCPExporter:
@@ -289,14 +289,14 @@ class TestExporterRegistry:
 
     def test_fcp_exporter_registered(self) -> None:
         """Test FCP exporter is registered in the registry."""
-        from jetdr.exporters import ExporterRegistry
+        from jetcutter.exporters import ExporterRegistry
 
         available = ExporterRegistry.list_available()
         assert "fcp" in available
 
     def test_create_fcp_exporter_from_registry(self) -> None:
         """Test creating FCP exporter via registry."""
-        from jetdr.exporters import create_exporter
+        from jetcutter.exporters import create_exporter
 
         exporter = create_exporter("fcp")
         assert isinstance(exporter, FCPExporter)

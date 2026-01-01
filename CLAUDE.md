@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-jetDR is a Python tool that automatically detects silence and filler words (「あー」「えっと」etc.) in videos and generates jet-cut timelines for DaVinci Resolve and Final Cut Pro.
+JetCutter is a Python tool that automatically detects silence and filler words (「あー」「えっと」etc.) in videos and generates jet-cut timelines for DaVinci Resolve and Final Cut Pro.
 
 ## Development Commands
 
@@ -32,10 +32,10 @@ mypy src/
 ruff format src/ --check
 
 # CLI commands
-jetdr process input.mp4           # Process video → DaVinci Resolve
-jetdr analyze input.mp4           # Analyze without export
-jetfcp export input.mp4 -o out.fcpxml  # Generate FCPXML
-jetfcp validate output.fcpxml     # Validate FCPXML syntax
+jetcutter process input.mp4           # Process video → DaVinci Resolve
+jetcutter analyze input.mp4           # Analyze without export
+jetcutter export input.mp4 -o out.fcpxml  # Generate FCPXML
+jetcutter validate output.fcpxml     # Validate FCPXML syntax
 ```
 
 ## Architecture
@@ -50,14 +50,13 @@ Video → Audio Extraction (ffmpeg) → Silence Detection (pydub)
 
 | Module | Purpose |
 |--------|---------|
-| `src/jetdr/audio/` | Audio extraction and silence detection |
-| `src/jetdr/speech/` | Whisper transcription and filler matching |
-| `src/jetdr/editor/segment.py` | Core `Segment` dataclass (SILENCE, FILLER, KEEP, CUT types) |
-| `src/jetdr/editor/merger.py` | Segment merging with margin application |
-| `src/jetdr/exporters/` | Abstract base classes and factory pattern for exporters |
-| `src/jetdr/davinci/` | DaVinci Resolve API integration (requires Studio version) |
-| `src/jetdr/fcp/` | FCPXML v1.10 generation for Final Cut Pro |
-| `src/jetfcp/` | Separate CLI for FCP-only workflow |
+| `src/jetcutter/audio/` | Audio extraction and silence detection |
+| `src/jetcutter/speech/` | Whisper transcription and filler matching |
+| `src/jetcutter/editor/segment.py` | Core `Segment` dataclass (SILENCE, FILLER, KEEP, CUT types) |
+| `src/jetcutter/editor/merger.py` | Segment merging with margin application |
+| `src/jetcutter/exporters/` | Abstract base classes and factory pattern for exporters |
+| `src/jetcutter/davinci/` | DaVinci Resolve API integration (requires Studio version) |
+| `src/jetcutter/fcp/` | FCPXML v1.10 generation for Final Cut Pro |
 
 ### Exporter Architecture (Plugin Pattern)
 - `BaseTimelineExporter` → abstract base
@@ -68,7 +67,7 @@ Video → Audio Extraction (ffmpeg) → Silence Detection (pydub)
 ### Configuration
 - `config/settings.yaml` - Detection parameters (threshold_db, min_duration_ms, model_name)
 - `config/fillers.yaml` - Filler words dictionary
-- Settings managed via Pydantic v2 models in `src/jetdr/config/settings.py`
+- Settings managed via Pydantic v2 models in `src/jetcutter/config/settings.py`
 
 ## Code Style
 
@@ -81,7 +80,7 @@ Video → Audio Extraction (ffmpeg) → Silence Detection (pydub)
 ## External Dependencies
 
 - **ffmpeg**: Must be installed on system for audio extraction
-- **DaVinci Resolve Studio 18+**: Required for `jetdr process` (free version lacks scripting API)
+- **DaVinci Resolve Studio 18+**: Required for `jetcutter process` (free version lacks scripting API)
 - **faster-whisper**: Runs on CUDA if available, falls back to CPU
 
 ## Documentation

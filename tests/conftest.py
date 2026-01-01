@@ -11,8 +11,8 @@ from typing import Generator
 
 import pytest
 
-from jetdr.config.settings import AppConfig
-from jetdr.editor.segment import Segment, SegmentType
+from jetcutter.config.settings import AppConfig
+from jetcutter.editor.segment import Segment, SegmentType
 
 
 # テストデータディレクトリ

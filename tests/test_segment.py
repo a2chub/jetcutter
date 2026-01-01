@@ -4,7 +4,7 @@ segment モジュールのテスト
 
 import pytest
 
-from jetdr.editor.segment import (
+from jetcutter.editor.segment import (
     Segment,
     SegmentType,
     calculate_complement_segments,

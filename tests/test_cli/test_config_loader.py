@@ -6,8 +6,8 @@ import pytest
 import typer
 import yaml
 
-from jetdr.cli.config_loader import load_app_config
-from jetdr.config.settings import AppConfig
+from jetcutter.cli.config_loader import load_app_config
+from jetcutter.config.settings import AppConfig
 
 
 class TestLoadAppConfig:
