@@ -89,6 +89,7 @@ class SettingsTabController(NSObject):
 
         return self
 
+    @property
     def view(self) -> NSView:
         """ビューを返す"""
         return self._view

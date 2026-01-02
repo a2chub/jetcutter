@@ -58,7 +58,8 @@ Video → Audio Extraction (ffmpeg) → Silence Detection (pydub)
 | `src/jetcutter/exporters/` | Abstract base classes and factory pattern for exporters |
 | `src/jetcutter/davinci/` | DaVinci Resolve API integration (requires Studio version) |
 | `src/jetcutter/fcp/` | FCPXML v1.10 generation for Final Cut Pro |
-| `src/jetcutter/gui/` | macOS GUI application with PySimpleGUI4 |
+| `src/jetcutter/gui/` | macOS native GUI application with PyObjC + AppKit |
+| `src/jetcutter/gui_legacy/` | Legacy GUI with PySimpleGUI4 (deprecated) |
 | `src/jetcutter/core/` | Core processing pipeline |
 
 ### Exporter Architecture (Plugin Pattern)
@@ -136,19 +137,39 @@ Core docs in `docs/davinci_resolve_auto_editor/`:
    - 動画のFPSはffprobeで取得（設定値より優先）
    - 59.94fps等の高フレームレートに対応
 
-### GUI開発
+### GUI開発 (PyObjC + AppKit)
 
-1. **PySimpleGUI4の制約**
-   - `write_event_value`を使用してスレッド間通信
-   - Tkinterウィジェットの直接操作が必要な場合あり
-   - `disabled=True`でRadio/Inputが非表示になるバグあり → 無効化処理を避ける
+1. **NSObjectサブクラスでのプロパティ定義**
+   - **重要**: ビューを返すメソッドには必ず`@property`デコレータを使用
+   - `@property`がないと`objc.python_selector`オブジェクトが返され、ビューが正しく設定されない
+   ```python
+   # ✅ 正しい
+   @property
+   def view(self) -> NSView:
+       return self._view
 
-2. **バックグラウンド処理**
+   # ❌ 間違い（タブ切り替えが動作しない原因）
+   def view(self) -> NSView:
+       return self._view
+   ```
+
+2. **NSTabViewでのタブ切り替え**
+   - 各タブコンテンツビューで`setWantsLayer_(True)`を呼び出す（レイヤーバックドレンダリング）
+   - NSTabViewItem、タブコントローラへの参照を保持（GC防止）
+   - `setAutoresizingMask_(NSViewWidthSizable | NSViewHeightSizable)`でリサイズ対応
+
+3. **スレッド間通信**
+   - UI更新はメインスレッドで実行する必要がある
+   - `dispatch_to_main_thread()`ヘルパーを使用
+   - GUIStateで`threading.RLock()`を使用（再入可能ロック）- `threading.Lock()`はデッドロックの原因
+
+4. **バックグラウンド処理**
    - 長時間処理は別スレッドで実行
-   - `threading.Event`でキャンセル処理を実装
+   - ProcessingControllerでバックグラウンドスレッド管理
+   - GUIStateをObserverパターンで更新通知
 
-3. **UI設計**
-   - 処理中もUI要素を表示維持（バリデーション済みなので操作は無視）
+5. **UI設計**
+   - Apple Human Interface Guidelines準拠
    - 処理時間は結果タブに`MM:SS.SS`形式で表示
 
 ## Project Status
@@ -168,6 +189,8 @@ Core docs in `docs/davinci_resolve_auto_editor/`:
 - ✅ DJIタイムコード対応
 - ✅ 自動FPS検出
 - ✅ `jetcutter gui` CLIコマンド追加
-- ✅ GUI: 出力モード表記変更（FCPX/DR）
-- ✅ GUI: 処理中のUI消失バグ修正
+- ✅ GUI: PyObjC + AppKitでmacOSネイティブGUIに移行
+- ✅ GUI: タブ切り替え問題修正（@propertyデコレータ欠落が原因）
+- ✅ GUI: デッドロック修正（RLock使用）
 - ✅ GUI: 処理時間表示機能追加
+- ✅ pyproject.toml: PyObjC依存関係追加

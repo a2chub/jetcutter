@@ -39,6 +39,8 @@ dev = [
 ]
 gui = [
     "PySimpleGUI4>=4.60.0",
+    "pyobjc-core>=10.0",
+    "pyobjc-framework-Cocoa>=10.0",
 ]
 
 [project.scripts]
