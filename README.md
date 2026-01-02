@@ -1,9 +1,17 @@
 # JetCutter - 動画自動編集エージェント
 
+[![Version](https://img.shields.io/badge/version-1.1.0-brightgreen.svg)](https://github.com/a2chub/jetcutter/releases/latest)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![macOS](https://img.shields.io/badge/macOS-11.0+-000000.svg?logo=apple)](https://github.com/a2chub/jetcutter/releases/latest)
 
 動画内の無音区間・フィラー（「あー」「えっと」等）を自動検知し、DaVinci ResolveまたはFinal Cut Proでジェットカット済みタイムラインを生成するPythonツールです。
+
+## ダウンロード
+
+**[最新版をダウンロード (macOS .dmg)](https://github.com/a2chub/jetcutter/releases/latest)**
+
+> 初回起動時は右クリック→「開く」で起動してください（Ad-hoc署名のため）
 
 ## 特徴
 
@@ -31,8 +39,8 @@
 
 ```bash
 # リポジトリをクローン
-git clone https://github.com/yourusername/JetCutter.git
-cd JetCutter
+git clone https://github.com/a2chub/jetcutter.git
+cd jetcutter
 
 # 仮想環境を作成・有効化
 uv venv
@@ -280,6 +288,8 @@ fillers:
 ## ライセンス
 
 MIT License - 詳細は[LICENSE](LICENSE)を参照してください。
+
+サードパーティライブラリのライセンス情報は[THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md)を参照してください。
 
 ## 貢献
 

@@ -42,6 +42,7 @@ jetcutter validate output.fcpxml     # Validate FCPXML syntax
 uv run briefcase create macOS app     # Create app scaffold
 uv run briefcase update macOS app     # Update app with latest code
 uv run briefcase build macOS app      # Build .app bundle
+uv run briefcase package macOS app --adhoc-sign  # Create DMG
 open ./build/jetcutter/macos/app/JetCutter.app  # Launch built app
 ```
 
@@ -180,7 +181,8 @@ Core docs in `docs/davinci_resolve_auto_editor/`:
 
 ## Project Status
 
-**Current Status**: ✅ GUI + FCPXML機能完成
+**Current Version**: v1.1.0
+**Current Status**: ✅ GUI + FCPXML機能完成 + DMG配布対応
 
 | 機能 | 状態 | テスト |
 |------|------|--------|
@@ -190,8 +192,16 @@ Core docs in `docs/davinci_resolve_auto_editor/`:
 | DaVinci連携 | ✅ 完成 | - |
 | macOS GUI | ✅ 完成 | - |
 | .appパッケージ | ✅ 完成 | Briefcase使用 |
+| DMG配布 | ✅ 完成 | GitHub Releases |
+| ライセンスコンプライアンス | ✅ 完成 | LGPL-3.0対応 |
 
-**Latest Updates** (2026-01-02):
+**v1.1.0 Updates** (2026-01-02):
+- ✅ Aboutダイアログ追加（バージョン・ライセンス情報表示）
+- ✅ ライセンスコンプライアンス対応（LICENSES/, THIRD_PARTY_LICENSES.md）
+- ✅ DMGパッケージング対応（GitHub Releasesで配布）
+- ✅ ランディングページにダウンロードリンク追加
+
+**v1.0.0 Updates** (2026-01-02):
 - ✅ FCPXML 1.10 DTD準拠修正
 - ✅ DJIタイムコード対応
 - ✅ 自動FPS検出
