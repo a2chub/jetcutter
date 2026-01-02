@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-01-02
+
+### Removed
+
+- **レガシーGUIコード削除** - `src/jetcutter/gui_legacy/` を完全削除（約2,151行）
+  - PySimpleGUI4ベースの旧GUI実装
+  - 関連するハンドラ、コンスタント、処理コード
+- **PySimpleGUI4依存関係** - pyproject.tomlから削除
+- **py2app設定ファイル** - `setup_gui.py` を削除（Briefcaseに統一）
+- **不要なライセンスファイル** - `LICENSES/LGPL-3.0.txt`, `LICENSES/GPL-3.0.txt`
+
+### Changed
+
+- 全依存関係がMITライセンスに統一
+- ドキュメント更新（PySimpleGUI4参照を削除）
+- GUI開発手順をBriefcaseに統一
+
 ## [1.1.0] - 2026-01-02
 
 ### Added
@@ -65,6 +82,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/a2chub/jetcutter/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/a2chub/jetcutter/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/a2chub/jetcutter/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/a2chub/jetcutter/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/a2chub/jetcutter/releases/tag/v1.0.0

@@ -5,7 +5,7 @@ JetCutter - DaVinci Resolve 自動編集エージェント
 ジェットカット済みのタイムラインを生成する自動編集ツール。
 """
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 __author__ = "atusi"
 
 from jetcutter.editor.segment import Segment, SegmentType

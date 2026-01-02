@@ -179,7 +179,7 @@
   <header class="header">
     <div class="container">
       <div class="header-content">
-        <a href="index.html" class="logo">JetCutter <span class="version-badge">v1.1.0</span></a>
+        <a href="index.html" class="logo">JetCutter <span class="version-badge">v1.1.1</span></a>
         <nav class="nav">
           <a href="index.html#features">機能</a>
           <a href="index.html#install">インストール</a>
@@ -205,11 +205,29 @@
         <p>JetCutterの全てのリリースと変更内容</p>
       </div>
 
+      <!-- v1.1.1 -->
+      <section class="version-section">
+        <div class="version-header">
+          <span class="version-number">v1.1.1</span>
+          <span class="version-tag">Latest</span>
+          <span class="version-date">2026年1月2日</span>
+        </div>
+
+        <div class="change-category changed">
+          <h3>変更点</h3>
+          <ul class="change-list">
+            <li><strong>レガシーコード削除</strong> - PySimpleGUI4ベースの旧GUIコード（gui_legacy/）を完全削除（約2,151行削減）</li>
+            <li><strong>依存関係簡素化</strong> - PySimpleGUI4依存を削除し、全依存関係をMITライセンスに統一</li>
+            <li><strong>ビルドツール統一</strong> - py2app設定（setup_gui.py）を削除、Briefcaseに完全移行</li>
+            <li><strong>ライセンスファイル整理</strong> - LGPL-3.0.txt, GPL-3.0.txtを削除（不要になったため）</li>
+          </ul>
+        </div>
+      </section>
+
       <!-- v1.1.0 -->
       <section class="version-section">
         <div class="version-header">
           <span class="version-number">v1.1.0</span>
-          <span class="version-tag">Latest</span>
           <span class="version-date">2026年1月2日</span>
         </div>
 
