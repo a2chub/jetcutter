@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JetCutter - AI動画自動編集ツール</title>
+  <meta name="description" content="JetCutterは動画の無音区間とフィラーを自動検知し、ジェットカットを瞬時に生成。あなたの編集時間を80%削減します。">
+
+  <!-- OGP -->
+  <meta property="og:title" content="JetCutter - AI動画自動編集ツール">
+  <meta property="og:description" content="動画の無音・フィラーを自動検知。編集時間を80%削減。">
+  <meta property="og:image" content="images/og-image.png">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="#" class="logo">JetCutter</a>
+        <nav class="nav">
+          <a href="#features">機能</a>
+          <a href="#install">インストール</a>
+          <a href="https://github.com/a2chub/jetcutter" target="_blank" rel="noopener">GitHub</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="container">
+      <div class="hero-content fade-in">
+        <h1 class="hero-title">
+          編集の「作業」から、<br>
+          創造の「時間」へ。
+        </h1>
+        <p class="hero-subtitle">
+          JetCutterは、動画の無音区間とフィラーを自動検知し、<br>
+          ジェットカットを瞬時に生成。あなたの編集時間を80%削減します。
+        </p>
+        <div class="hero-cta">
+          <a href="https://github.com/a2chub/jetcutter" class="btn btn-primary" target="_blank" rel="noopener">今すぐ始める</a>
+          <a href="#features" class="btn btn-secondary">詳しく見る</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem Section -->
+  <section class="section problem">
+    <div class="container">
+      <div class="problem-content fade-in">
+        <h2 class="section-title">その「えっと」、何回消しましたか？</h2>
+        <div class="problem-text">
+          <p>60分の動画編集。</p>
+          <p>波形を見ながら無音を探し、カット。<br>
+          「あー」を見つけてカット。<br>
+          「えっと」を見つけてカット。</p>
+          <p>気づけば30分。<br>同じ作業の繰り返し。</p>
+          <p class="highlight">あなたの才能は、そんなことのためにあるのではありません。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Solution Section -->
+  <section class="section solution">
+    <div class="container">
+      <div class="solution-content fade-in">
+        <h2 class="section-title">AIが単調な作業を引き受けます</h2>
+        <p class="solution-intro">JetCutterは、動画を投げ込むだけ。</p>
+        <ul class="solution-list">
+          <li>無音区間をミリ秒単位で自動検知</li>
+          <li>「あー」「えっと」「まあ」などのフィラーをAIが識別</li>
+          <li>Final Cut Pro / DaVinci Resolve用のタイムラインを瞬時に生成</li>
+        </ul>
+        <p class="solution-outro">あとは、あなたの創造性を発揮するだけ。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits Section -->
+  <section class="section benefits" id="features">
+    <div class="container">
+      <h2 class="section-title fade-in">JetCutterがもたらす3つの変化</h2>
+      <div class="benefits-grid">
+        <div class="benefit-card fade-in">
+          <div class="benefit-icon">
+            <img src="images/icon-time.png" alt="時間節約" width="64" height="64">
+          </div>
+          <h3>編集時間を80%削減</h3>
+          <p>60分動画の下準備が30分から3分に。<br>月に10時間の編集なら、8時間を取り戻せます。</p>
+        </div>
+        <div class="benefit-card fade-in">
+          <div class="benefit-icon">
+            <img src="images/icon-quality.png" alt="品質保証" width="64" height="64">
+          </div>
+          <h3>フィラー見落としゼロ</h3>
+          <p>AIによる網羅的な検知で、<br>人間の目が見逃すフィラーも確実にキャッチ。</p>
+        </div>
+        <div class="benefit-card fade-in">
+          <div class="benefit-icon">
+            <img src="images/icon-freedom.png" alt="創造性" width="64" height="64">
+          </div>
+          <h3>創造に集中できる</h3>
+          <p>単調な作業はJetCutterに任せて、<br>演出・構成・ストーリーテリングに時間を使いましょう。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="section features">
+    <div class="container">
+      <h2 class="section-title fade-in">シンプルなワークフロー</h2>
+      <div class="features-tabs fade-in">
+        <div class="tabs-nav">
+          <button class="tab-btn active" data-tab="process">処理</button>
+          <button class="tab-btn" data-tab="settings">設定</button>
+          <button class="tab-btn" data-tab="results">結果</button>
+        </div>
+        <div class="tabs-content">
+          <div class="tab-panel active" id="process">
+            <div class="tab-text">
+              <h3>動画を選んで、ボタンを押すだけ</h3>
+              <p>ファイルを選択し、出力先を指定して「処理開始」。<br>複雑な設定は必要ありません。</p>
+            </div>
+            <div class="tab-image">
+              <img src="images/process.png" alt="処理タブ" class="screenshot">
+            </div>
+          </div>
+          <div class="tab-panel" id="settings">
+            <div class="tab-text">
+              <h3>プロ向けのカスタマイズ</h3>
+              <p>無音しきい値、Whisperモデル、マージン設定など<br>細かな調整も可能です。</p>
+            </div>
+            <div class="tab-image">
+              <img src="images/config.png" alt="設定タブ" class="screenshot">
+            </div>
+          </div>
+          <div class="tab-panel" id="results">
+            <div class="tab-text">
+              <h3>詳細な分析結果</h3>
+              <p>検出されたセグメントの一覧、削減率、<br>処理時間をひと目で確認できます。</p>
+            </div>
+            <div class="tab-image">
+              <img src="images/result.png" alt="結果タブ" class="screenshot">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="section stats">
+    <div class="container">
+      <h2 class="section-title fade-in">数字で見る効果</h2>
+      <div class="stats-grid fade-in">
+        <div class="stat-item">
+          <span class="stat-number">80-90%</span>
+          <span class="stat-label">編集時間削減</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">3-5分</span>
+          <span class="stat-label">60分動画の処理</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">100%</span>
+          <span class="stat-label">フィラー検出率</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NLE Section -->
+  <section class="section nle">
+    <div class="container">
+      <h2 class="section-title fade-in">あなたのワークフローに統合</h2>
+      <div class="nle-grid fade-in">
+        <div class="nle-card">
+          <div class="nle-logo">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <h3>Final Cut Pro</h3>
+          <p>FCPXML v1.10形式で出力。<br>インポートするだけでタイムライン完成。</p>
+        </div>
+        <div class="nle-card">
+          <div class="nle-logo">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor">
+              <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+          </div>
+          <h3>DaVinci Resolve</h3>
+          <p>Scripting APIで直接連携。<br>※ Studio版が必要</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Install Section -->
+  <section class="section install" id="install">
+    <div class="container">
+      <h2 class="section-title fade-in">3ステップで始められます</h2>
+      <div class="install-steps fade-in">
+        <div class="install-step">
+          <span class="step-number">1</span>
+          <div class="step-content">
+            <h3>リポジトリをクローン</h3>
+            <code>git clone https://github.com/a2chub/jetcutter.git</code>
+          </div>
+        </div>
+        <div class="install-step">
+          <span class="step-number">2</span>
+          <div class="step-content">
+            <h3>依存関係をインストール</h3>
+            <code>uv pip install -e ".[gui]"</code>
+          </div>
+        </div>
+        <div class="install-step">
+          <span class="step-number">3</span>
+          <div class="step-content">
+            <h3>GUIを起動</h3>
+            <code>jetcutter gui</code>
+          </div>
+        </div>
+      </div>
+      <p class="install-note">※ ffmpegが必要です: <code>brew install ffmpeg</code></p>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="section faq">
+    <div class="container">
+      <h2 class="section-title fade-in">よくある質問</h2>
+      <div class="faq-list fade-in">
+        <details class="faq-item">
+          <summary>無料で使えますか？</summary>
+          <p>はい、JetCutterはMITライセンスのオープンソースソフトウェアです。完全無料でお使いいただけます。</p>
+        </details>
+        <details class="faq-item">
+          <summary>Windows/Linuxでも動きますか？</summary>
+          <p>現在はmacOS向けに最適化されています。CLIはクロスプラットフォームで動作しますが、GUIはmacOS専用です。</p>
+        </details>
+        <details class="faq-item">
+          <summary>DaVinci Resolve無料版でも使えますか？</summary>
+          <p>Final Cut Pro出力（FCPXML）は無料版でも利用可能です。DaVinci Resolve直接連携にはStudio版が必要です。</p>
+        </details>
+        <details class="faq-item">
+          <summary>フィラー辞書はカスタマイズできますか？</summary>
+          <p>はい、config/fillers.yamlを編集することで、独自のフィラーワードを追加できます。</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="section cta">
+    <div class="container">
+      <div class="cta-content fade-in">
+        <h2>退屈な編集作業から解放されませんか？</h2>
+        <p>JetCutterを使えば、今日から編集の時間を取り戻せます。<br>オープンソース。無料。すぐに始められます。</p>
+        <a href="https://github.com/a2chub/jetcutter" class="btn btn-primary btn-large" target="_blank" rel="noopener">GitHubで始める</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <p class="footer-logo">JetCutter</p>
+        <p class="footer-tagline">AI動画自動編集エージェント</p>
+        <div class="footer-links">
+          <a href="https://github.com/a2chub/jetcutter" target="_blank" rel="noopener">GitHub</a>
+          <span>|</span>
+          <a href="https://github.com/a2chub/jetcutter/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+        </div>
+        <p class="footer-credit">Made with love for video creators</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
