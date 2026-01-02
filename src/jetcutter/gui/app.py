@@ -125,6 +125,7 @@ class JetCutterAppDelegate(NSObject):
         self.settings_tab = None
         self.results_tab = None
         self.tab_view = None
+        self.tab_items = []  # NSTabViewItemの参照も保持
 
         return self
 
@@ -188,18 +189,21 @@ class JetCutterAppDelegate(NSObject):
             process_tab_item.setLabel_(TAB_LABELS[TAB_PROCESS])
             process_tab_item.setView_(self.process_tab.view)
             self.tab_view.addTabViewItem_(process_tab_item)
+            self.tab_items.append(process_tab_item)  # 参照保持
 
             # SettingsTabを追加
             settings_tab_item = NSTabViewItem.alloc().initWithIdentifier_(TAB_SETTINGS)
             settings_tab_item.setLabel_(TAB_LABELS[TAB_SETTINGS])
             settings_tab_item.setView_(self.settings_tab.view)
             self.tab_view.addTabViewItem_(settings_tab_item)
+            self.tab_items.append(settings_tab_item)  # 参照保持
 
             # ResultsTabを追加
             results_tab_item = NSTabViewItem.alloc().initWithIdentifier_(TAB_RESULTS)
             results_tab_item.setLabel_(TAB_LABELS[TAB_RESULTS])
             results_tab_item.setView_(self.results_tab.view)
             self.tab_view.addTabViewItem_(results_tab_item)
+            self.tab_items.append(results_tab_item)  # 参照保持
 
             # ========== ウィンドウの作成 ==========
 

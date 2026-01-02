@@ -97,7 +97,9 @@ class SettingsTabController(NSObject):
         """設定タブのビューを作成"""
         # ビューのサイズは親のタブビューで決定されるため、仮のサイズで作成
         view = NSView.alloc().initWithFrame_(NSMakeRect(0, 0, 700, 500))
-        # 自動リサイズマスクを設定（タブ切り替え時のイベント処理に必要）
+        # レイヤーバックドレンダリングを有効化（タブ切り替えに必要）
+        view.setWantsLayer_(True)
+        # 自動リサイズマスクを設定
         view.setAutoresizingMask_(NSViewWidthSizable | NSViewHeightSizable)
 
         content_width = 700 - MARGIN * 2

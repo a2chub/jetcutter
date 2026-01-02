@@ -214,7 +214,9 @@ class ResultsTabController(NSObject):
         width = 700
         height = 550
         view = NSView.alloc().initWithFrame_(NSMakeRect(0, 0, width, height))
-        # 自動リサイズマスクを設定（タブ切り替え時のイベント処理に必要）
+        # レイヤーバックドレンダリングを有効化（タブ切り替えに必要）
+        view.setWantsLayer_(True)
+        # 自動リサイズマスクを設定
         view.setAutoresizingMask_(NSViewWidthSizable | NSViewHeightSizable)
 
         content_width = width - MARGIN * 2

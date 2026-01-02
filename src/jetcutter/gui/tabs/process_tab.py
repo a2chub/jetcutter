@@ -204,7 +204,9 @@ class ProcessTabController(NSObject):
         width = 660.0
         height = 510.0
         self._view = NSView.alloc().initWithFrame_(NSMakeRect(0, 0, width, height))
-        # 自動リサイズマスクを設定（タブ切り替え時のイベント処理に必要）
+        # レイヤーバックドレンダリングを有効化（タブ切り替えに必要）
+        self._view.setWantsLayer_(True)
+        # 自動リサイズマスクを設定
         self._view.setAutoresizingMask_(NSViewWidthSizable | NSViewHeightSizable)
 
         content_width = width - MARGIN * 2
