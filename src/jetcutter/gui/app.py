@@ -18,6 +18,8 @@ from AppKit import (
     NSMenuItem,
     NSTabView,
     NSTabViewItem,
+    NSViewHeightSizable,
+    NSViewWidthSizable,
     NSWindow,
     NSWindowStyleMaskClosable,
     NSWindowStyleMaskMiniaturizable,
@@ -172,6 +174,8 @@ class JetCutterAppDelegate(NSObject):
             tab_view = NSTabView.alloc().initWithFrame_(
                 NSMakeRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
             )
+            # 自動リサイズマスクを設定（ウィンドウサイズに追従）
+            tab_view.setAutoresizingMask_(NSViewWidthSizable | NSViewHeightSizable)
 
             # ProcessTabを追加
             process_tab_item = NSTabViewItem.alloc().initWithIdentifier_(TAB_PROCESS)
