@@ -236,6 +236,10 @@ def create_results_tab() -> list[list[sg.Element]]:
                         sg.Text("保持区間:", size=(8, 1)),
                         sg.Input("0", key="-KEEP-COUNT-", size=(10, 1), **readonly_input),
                     ],
+                    [
+                        sg.Text("処理時間:", size=(10, 1)),
+                        sg.Input("--:--", key="-PROCESSING-TIME-", size=(12, 1), **readonly_input),
+                    ],
                 ],
                 expand_x=True,
             )

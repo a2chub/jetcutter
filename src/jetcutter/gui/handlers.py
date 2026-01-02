@@ -6,6 +6,7 @@ GUIイベントの処理ロジック。
 
 from __future__ import annotations
 
+import time
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -53,6 +54,7 @@ class EventHandler:
         self._config_path = config_path
         self._processor = BackgroundProcessor(window)
         self._result: AudioProcessingResult | None = None
+        self._processing_start_time: float | None = None
 
     def handle(self, event: str, values: dict[str, Any]) -> bool:
         """
@@ -131,6 +133,9 @@ class EventHandler:
         self._window["-STATUS-TEXT-"].update("処理を開始しています...")
         self._window["-FOOTER-STATUS-"].update("処理中...")
 
+        # 処理開始時刻を記録
+        self._processing_start_time = time.time()
+
         # バックグラウンド処理開始
         self._processor.start(
             video_path=video_path,
@@ -168,6 +173,12 @@ class EventHandler:
 
         logger.info("[DEBUG] _handle_complete called")
 
+        # 処理時間を計算
+        processing_time_sec: float | None = None
+        if self._processing_start_time is not None:
+            processing_time_sec = time.time() - self._processing_start_time
+            self._processing_start_time = None
+
         self._set_processing_ui(False)
         self._update_progress_bar(100)
 
@@ -181,7 +192,7 @@ class EventHandler:
         self._result = result
 
         # 結果タブを更新
-        self._update_results_tab(result)
+        self._update_results_tab(result, processing_time_sec)
         logger.info("[DEBUG] _update_results_tab completed")
 
         # 完了メッセージ
@@ -335,14 +346,17 @@ class EventHandler:
 
         self._window.refresh()
 
-    def _update_results_tab(self, result: AudioProcessingResult) -> None:
+    def _update_results_tab(
+        self, result: AudioProcessingResult, processing_time_sec: float | None = None
+    ) -> None:
         """結果タブを更新"""
         from loguru import logger
         logger.info("[DEBUG] _update_results_tab called")
 
         # 要素の存在確認
         for key in ["-TOTAL-DURATION-", "-CUT-DURATION-", "-CUT-RATIO-",
-                    "-SILENCE-COUNT-", "-FILLER-COUNT-", "-KEEP-COUNT-", "-SEGMENT-TABLE-"]:
+                    "-SILENCE-COUNT-", "-FILLER-COUNT-", "-KEEP-COUNT-",
+                    "-PROCESSING-TIME-", "-SEGMENT-TABLE-"]:
             elem = self._window[key]
             logger.info(f"[DEBUG] Element {key}: type={type(elem).__name__}, widget={elem.Widget if hasattr(elem, 'Widget') else 'N/A'}")
 
@@ -375,6 +389,14 @@ class EventHandler:
         update_readonly_input("-SILENCE-COUNT-", str(len(result.silence_segments)))
         update_readonly_input("-FILLER-COUNT-", str(len(result.filler_segments)))
         update_readonly_input("-KEEP-COUNT-", str(len(result.keep_segments)))
+
+        # 処理時間を更新
+        if processing_time_sec is not None:
+            minutes = int(processing_time_sec // 60)
+            seconds = processing_time_sec % 60
+            processing_time_str = f"{minutes:02d}:{seconds:05.2f}"
+            update_readonly_input("-PROCESSING-TIME-", processing_time_str)
+            logger.info(f"[DEBUG] processing_time updated: {processing_time_str}")
 
         # セグメントテーブル更新
         table_data = []
