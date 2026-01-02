@@ -49,6 +49,9 @@ class GUIState:
         # RLockを使用して再入可能なロックにする（デッドロック防止）
         self._lock = threading.RLock()
         self._is_cancelled = False
+        # 処理時間追跡
+        self._processing_start_time: float | None = None
+        self._processing_time_sec: float | None = None
 
     @property
     def processing_state(self) -> ProcessingState:
@@ -67,6 +70,12 @@ class GUIState:
         with self._lock:
             return self._result
 
+    @property
+    def processing_time_sec(self) -> float | None:
+        """処理時間（秒）を返す"""
+        with self._lock:
+            return self._processing_time_sec
+
     def add_observer(self, observer: GUIStateObserver) -> None:
         """オブザーバを追加"""
         with self._lock:
@@ -81,9 +90,16 @@ class GUIState:
 
     def set_processing(self, is_processing: bool) -> None:
         """処理中フラグを設定"""
+        import time
+
         with self._lock:
+            was_processing = self._processing_state.is_processing
             self._processing_state.is_processing = is_processing
-            if not is_processing:
+            if is_processing and not was_processing:
+                # 処理開始時刻を記録（初回のみ）
+                self._processing_start_time = time.time()
+                self._processing_time_sec = None
+            elif not is_processing:
                 self._processing_state.current_stage = ""
                 self._processing_state.progress_percent = 0
             state = self.processing_state
@@ -148,6 +164,14 @@ class GUIState:
         Args:
             result: 処理結果
         """
+        import time
+
+        # 処理時間を計算
+        with self._lock:
+            if self._processing_start_time is not None:
+                self._processing_time_sec = time.time() - self._processing_start_time
+            self._processing_start_time = None
+
         self.set_processing(False)
         self.set_result(result)
 
