@@ -1,6 +1,6 @@
 [project]
 name = "jetcutter"
-version = "1.1.1"
+version = "1.5.0-rc.1"
 description = "DaVinci Resolve / Final Cut Pro 自動編集エージェント - 無音区間・フィラー自動検知・削除ツール"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -104,7 +104,7 @@ addopts = "-v --cov=jetcutter --cov-report=term-missing"
 [tool.briefcase]
 project_name = "JetCutter"
 bundle = "com.atusi.jetcutter"
-version = "1.1.1"
+version = "1.5.0"
 url = "https://github.com/a2chub/jetcutter"
 license.file = "LICENSE"
 author = "atusi"

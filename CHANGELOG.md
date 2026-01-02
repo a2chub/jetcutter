@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **開発ガイド** - `docs/DEVELOPMENT.md` を追加（ブランチ戦略、ワークフロー、品質チェックリスト）
+
 ## [1.1.1] - 2026-01-02
 
 ### Removed
