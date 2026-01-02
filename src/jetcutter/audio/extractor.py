@@ -19,6 +19,60 @@ from jetcutter.utils.logger import get_logger
 logger = get_logger(__name__)
 
 
+def _extend_path_for_homebrew() -> None:
+    """
+    よくあるffmpegのインストールパスをPATHに追加
+
+    BriefcaseでバンドルされたアプリはシステムのPATHにアクセスできないため、
+    Homebrewなどのよくあるインストールパスを追加する。
+    """
+    common_paths = [
+        "/opt/homebrew/bin",  # Homebrew (Apple Silicon)
+        "/usr/local/bin",  # Homebrew (Intel) / manual install
+        "/usr/bin",  # System
+        "/opt/local/bin",  # MacPorts
+    ]
+
+    current_path = os.environ.get("PATH", "")
+    additional_paths = [p for p in common_paths if p not in current_path]
+    if additional_paths:
+        os.environ["PATH"] = current_path + ":" + ":".join(additional_paths)
+
+
+def _find_binary(name: str) -> str | None:
+    """
+    バイナリを検索（PATH + よくあるパス）
+
+    Args:
+        name: バイナリ名（"ffmpeg" or "ffprobe"）
+
+    Returns:
+        見つかったパス、またはNone
+    """
+    common_paths = [
+        "/opt/homebrew/bin",
+        "/usr/local/bin",
+        "/usr/bin",
+        "/opt/local/bin",
+    ]
+
+    # PATHを拡張
+    _extend_path_for_homebrew()
+
+    # shutil.whichで検索
+    binary_path = shutil.which(name)
+    if binary_path:
+        return binary_path
+
+    # 直接パスをチェック
+    for base_path in common_paths:
+        full_path = os.path.join(base_path, name)
+        if os.path.isfile(full_path) and os.access(full_path, os.X_OK):
+            return full_path
+
+    return None
+
+
 def get_ffmpeg_path() -> str:
     """
     実行環境に応じたffmpegのパスを返す
@@ -38,8 +92,9 @@ def get_ffmpeg_path() -> str:
                 return ffmpeg_path
 
     # 開発環境 or システムのffmpegを使用
-    ffmpeg_system = shutil.which("ffmpeg")
+    ffmpeg_system = _find_binary("ffmpeg")
     if ffmpeg_system:
+        logger.debug(f"Using system ffmpeg: {ffmpeg_system}")
         return ffmpeg_system
 
     return "ffmpeg"
@@ -61,8 +116,9 @@ def get_ffprobe_path() -> str:
                 logger.debug(f"Using bundled ffprobe: {ffprobe_path}")
                 return ffprobe_path
 
-    ffprobe_system = shutil.which("ffprobe")
+    ffprobe_system = _find_binary("ffprobe")
     if ffprobe_system:
+        logger.debug(f"Using system ffprobe: {ffprobe_system}")
         return ffprobe_system
 
     return "ffprobe"

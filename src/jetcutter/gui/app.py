@@ -6,6 +6,7 @@ PyObjC + AppKitを使用したmacOSネイティブUIアプリケーション。
 
 from __future__ import annotations
 
+import os
 import shutil
 import sys
 
@@ -55,10 +56,41 @@ def check_ffmpeg() -> bool:
     """
     ffmpegがインストールされているか確認
 
+    BriefcaseでバンドルされたアプリはシステムのPATHにアクセスできないため、
+    よくあるインストールパスを直接チェックする。
+
     Returns:
         ffmpegが利用可能ならTrue
     """
-    return shutil.which("ffmpeg") is not None
+    # よくあるffmpegのインストールパス
+    common_paths = [
+        "/opt/homebrew/bin",  # Homebrew (Apple Silicon)
+        "/usr/local/bin",  # Homebrew (Intel) / manual install
+        "/usr/bin",  # System
+        "/opt/local/bin",  # MacPorts
+    ]
+
+    # 現在のPATHに追加
+    current_path = os.environ.get("PATH", "")
+    additional_paths = [p for p in common_paths if p not in current_path]
+    if additional_paths:
+        os.environ["PATH"] = current_path + ":" + ":".join(additional_paths)
+        logger.debug(f"Extended PATH with: {additional_paths}")
+
+    # ffmpegを検索
+    ffmpeg_path = shutil.which("ffmpeg")
+    if ffmpeg_path:
+        logger.info(f"Found ffmpeg at: {ffmpeg_path}")
+        return True
+
+    # 直接パスをチェック
+    for base_path in common_paths:
+        ffmpeg_full = os.path.join(base_path, "ffmpeg")
+        if os.path.isfile(ffmpeg_full) and os.access(ffmpeg_full, os.X_OK):
+            logger.info(f"Found ffmpeg at: {ffmpeg_full}")
+            return True
+
+    return False
 
 
 def show_ffmpeg_error() -> None:
