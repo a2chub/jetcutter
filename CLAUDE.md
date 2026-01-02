@@ -37,6 +37,12 @@ jetcutter process input.mp4           # Process video → DaVinci Resolve
 jetcutter analyze input.mp4           # Analyze without export
 jetcutter export input.mp4 -o out.fcpxml  # Generate FCPXML
 jetcutter validate output.fcpxml     # Validate FCPXML syntax
+
+# Briefcase packaging (macOS .app)
+uv run briefcase create macOS app     # Create app scaffold
+uv run briefcase update macOS app     # Update app with latest code
+uv run briefcase build macOS app      # Build .app bundle
+open ./build/jetcutter/macos/app/JetCutter.app  # Launch built app
 ```
 
 ## Architecture
@@ -183,6 +189,7 @@ Core docs in `docs/davinci_resolve_auto_editor/`:
 | FCPXML生成 | ✅ 完成 | 43テスト合格 (97%カバレッジ) |
 | DaVinci連携 | ✅ 完成 | - |
 | macOS GUI | ✅ 完成 | - |
+| .appパッケージ | ✅ 完成 | Briefcase使用 |
 
 **Latest Updates** (2026-01-02):
 - ✅ FCPXML 1.10 DTD準拠修正
@@ -194,3 +201,5 @@ Core docs in `docs/davinci_resolve_auto_editor/`:
 - ✅ GUI: デッドロック修正（RLock使用）
 - ✅ GUI: 処理時間表示機能追加
 - ✅ pyproject.toml: PyObjC依存関係追加
+- ✅ Briefcase: macOS .appパッケージング対応
+- ✅ Briefcase: マルチプロセス新規ウィンドウ問題修正（spawn→fork）

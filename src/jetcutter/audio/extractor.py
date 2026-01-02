@@ -6,7 +6,10 @@ ffmpeg-pythonを使用して動画ファイルから音声を抽出する。
 
 from __future__ import annotations
 
+import os
+import shutil
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -14,6 +17,55 @@ from jetcutter.utils.file_utils import ensure_directory, temporary_file, validat
 from jetcutter.utils.logger import get_logger
 
 logger = get_logger(__name__)
+
+
+def get_ffmpeg_path() -> str:
+    """
+    実行環境に応じたffmpegのパスを返す
+
+    Returns:
+        ffmpegバイナリのパス
+    """
+    if getattr(sys, "frozen", False):
+        # Briefcase/PyInstallerでパッケージ化された場合
+        if sys.platform == "darwin":
+            # .app/Contents/MacOS から .app/Contents/Resources へ
+            bundle_dir = os.path.dirname(sys.executable)
+            resources_dir = os.path.join(os.path.dirname(bundle_dir), "Resources")
+            ffmpeg_path = os.path.join(resources_dir, "ffmpeg")
+            if os.path.exists(ffmpeg_path):
+                logger.debug(f"Using bundled ffmpeg: {ffmpeg_path}")
+                return ffmpeg_path
+
+    # 開発環境 or システムのffmpegを使用
+    ffmpeg_system = shutil.which("ffmpeg")
+    if ffmpeg_system:
+        return ffmpeg_system
+
+    return "ffmpeg"
+
+
+def get_ffprobe_path() -> str:
+    """
+    実行環境に応じたffprobeのパスを返す
+
+    Returns:
+        ffprobeバイナリのパス
+    """
+    if getattr(sys, "frozen", False):
+        if sys.platform == "darwin":
+            bundle_dir = os.path.dirname(sys.executable)
+            resources_dir = os.path.join(os.path.dirname(bundle_dir), "Resources")
+            ffprobe_path = os.path.join(resources_dir, "ffprobe")
+            if os.path.exists(ffprobe_path):
+                logger.debug(f"Using bundled ffprobe: {ffprobe_path}")
+                return ffprobe_path
+
+    ffprobe_system = shutil.which("ffprobe")
+    if ffprobe_system:
+        return ffprobe_system
+
+    return "ffprobe"
 
 
 class AudioExtractionError(Exception):
@@ -47,7 +99,7 @@ class AudioExtractor:
         """ffmpegがインストールされているか確認"""
         try:
             subprocess.run(
-                ["ffmpeg", "-version"],
+                [get_ffmpeg_path(), "-version"],
                 capture_output=True,
                 check=True,
             )
@@ -102,7 +154,7 @@ class AudioExtractor:
     def _run_ffmpeg(self, input_path: Path, output_path: Path) -> None:
         """ffmpegを実行して音声を抽出"""
         cmd = [
-            "ffmpeg",
+            get_ffmpeg_path(),
             "-y",  # 上書き確認なし
             "-i",
             str(input_path),
@@ -163,7 +215,7 @@ class AudioExtractor:
         file_path = Path(file_path)
 
         cmd = [
-            "ffprobe",
+            get_ffprobe_path(),
             "-v",
             "quiet",
             "-print_format",
@@ -212,7 +264,7 @@ class AudioExtractor:
         file_path = Path(file_path)
 
         cmd = [
-            "ffprobe",
+            get_ffprobe_path(),
             "-v",
             "quiet",
             "-print_format",
