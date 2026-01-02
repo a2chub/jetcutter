@@ -23,6 +23,8 @@ from AppKit import (
     NSSlider,
     NSTextField,
     NSView,
+    NSViewHeightSizable,
+    NSViewWidthSizable,
 )
 from Foundation import NSMakeRect, NSObject
 
@@ -95,6 +97,8 @@ class SettingsTabController(NSObject):
         """設定タブのビューを作成"""
         # ビューのサイズは親のタブビューで決定されるため、仮のサイズで作成
         view = NSView.alloc().initWithFrame_(NSMakeRect(0, 0, 700, 500))
+        # 自動リサイズマスクを設定（タブ切り替え時のイベント処理に必要）
+        view.setAutoresizingMask_(NSViewWidthSizable | NSViewHeightSizable)
 
         content_width = 700 - MARGIN * 2
         y = 500 - MARGIN - 10
@@ -445,8 +449,7 @@ class SettingsTabController(NSObject):
         button.setTitle_(title)
         button.setBezelStyle_(NSBezelStyleRounded)
         button.setFont_(NSFont.systemFontOfSize_(13))
-        if primary:
-            button.setKeyEquivalent_("\r")
+        # Note: Enterキーバインドはタブ切り替えと干渉するため削除
         return button
 
     @objc.python_method

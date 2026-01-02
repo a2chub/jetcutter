@@ -21,6 +21,8 @@ from AppKit import (
     NSTableView,
     NSTextField,
     NSView,
+    NSViewHeightSizable,
+    NSViewWidthSizable,
 )
 from Foundation import NSMakeRect, NSObject
 
@@ -212,6 +214,8 @@ class ResultsTabController(NSObject):
         width = 700
         height = 550
         view = NSView.alloc().initWithFrame_(NSMakeRect(0, 0, width, height))
+        # 自動リサイズマスクを設定（タブ切り替え時のイベント処理に必要）
+        view.setAutoresizingMask_(NSViewWidthSizable | NSViewHeightSizable)
 
         content_width = width - MARGIN * 2
         y = height - MARGIN - 10

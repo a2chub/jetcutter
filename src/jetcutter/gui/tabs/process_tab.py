@@ -25,6 +25,8 @@ from AppKit import (
     NSSegmentStyleRounded,
     NSTextField,
     NSView,
+    NSViewHeightSizable,
+    NSViewWidthSizable,
 )
 from Foundation import NSMakeRect, NSObject
 from loguru import logger
@@ -107,8 +109,7 @@ def create_button(
     button.setTitle_(title)
     button.setBezelStyle_(NSBezelStyleRounded)
     button.setFont_(NSFont.systemFontOfSize_(13))
-    if primary:
-        button.setKeyEquivalent_("\r")  # Enterキーで実行
+    # Note: Enterキーバインドはタブ切り替えと干渉するため削除
     return button
 
 
@@ -203,6 +204,8 @@ class ProcessTabController(NSObject):
         width = 660.0
         height = 510.0
         self._view = NSView.alloc().initWithFrame_(NSMakeRect(0, 0, width, height))
+        # 自動リサイズマスクを設定（タブ切り替え時のイベント処理に必要）
+        self._view.setAutoresizingMask_(NSViewWidthSizable | NSViewHeightSizable)
 
         content_width = width - MARGIN * 2
         y = height - MARGIN - 10
