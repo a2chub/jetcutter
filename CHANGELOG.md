@@ -16,9 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - ライセンス情報表示
   - GitHubリポジトリへのリンク
 - **ライセンスコンプライアンス対応** - DMG配布に必要なライセンス文書を整備
-  - `LICENSES/` フォルダにMIT, LGPL-3.0, GPL-3.0全文を追加
+  - `LICENSES/` フォルダにMIT全文を追加
   - `THIRD_PARTY_LICENSES.md` で全依存パッケージの帰属表示を記載
-  - PySimpleGUI4のLGPL-3.0遵守要件を明示
 
 ### Changed
 

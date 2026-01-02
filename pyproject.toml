@@ -38,7 +38,6 @@ dev = [
     "types-PyYAML>=6.0.0",
 ]
 gui = [
-    "PySimpleGUI4>=4.60.0",
     "pyobjc-core>=10.0",
     "pyobjc-framework-Cocoa>=10.0",
 ]
@@ -92,8 +91,6 @@ module = [
     "pydub.*",
     "ffmpeg.*",
     "faster_whisper.*",
-    "PySimpleGUI.*",
-    "PySimpleGUI4.*",
     "AppKit.*",
     "objc.*",
 ]

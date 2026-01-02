@@ -629,8 +629,8 @@ def gui() -> None:
         gui_main()
     except ImportError as e:
         console.print(f"[red]GUI module not available:[/red] {e}")
-        console.print("\n[yellow]Hint:[/yellow] GUI requires PySimpleGUI4 package")
-        console.print("  Install with: pip install PySimpleGUI4")
+        console.print("\n[yellow]Hint:[/yellow] GUI requires PyObjC packages (macOS only)")
+        console.print("  Install with: pip install pyobjc-core pyobjc-framework-Cocoa")
         raise typer.Exit(1) from None
     except Exception as e:
         console.print(f"[red]Failed to start GUI:[/red] {e}")

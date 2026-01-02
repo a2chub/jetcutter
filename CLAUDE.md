@@ -66,7 +66,6 @@ Video → Audio Extraction (ffmpeg) → Silence Detection (pydub)
 | `src/jetcutter/davinci/` | DaVinci Resolve API integration (requires Studio version) |
 | `src/jetcutter/fcp/` | FCPXML v1.10 generation for Final Cut Pro |
 | `src/jetcutter/gui/` | macOS native GUI application with PyObjC + AppKit |
-| `src/jetcutter/gui_legacy/` | Legacy GUI with PySimpleGUI4 (deprecated) |
 | `src/jetcutter/core/` | Core processing pipeline |
 
 ### Exporter Architecture (Plugin Pattern)
@@ -193,7 +192,7 @@ Core docs in `docs/davinci_resolve_auto_editor/`:
 | macOS GUI | ✅ 完成 | - |
 | .appパッケージ | ✅ 完成 | Briefcase使用 |
 | DMG配布 | ✅ 完成 | GitHub Releases |
-| ライセンスコンプライアンス | ✅ 完成 | LGPL-3.0対応 |
+| ライセンスコンプライアンス | ✅ 完成 | MIT (全依存関係) |
 
 **v1.1.0 Updates** (2026-01-02):
 - ✅ Aboutダイアログ追加（バージョン・ライセンス情報表示）

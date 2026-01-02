@@ -1,6 +1,6 @@
 # JetCutter GUI
 
-macOS向けのグラフィカルユーザーインターフェース。
+macOS向けのグラフィカルユーザーインターフェース（PyObjC + AppKit）。
 
 ## 起動方法
 
@@ -21,17 +21,18 @@ uv pip install -e ".[gui]"
 uv run python -m jetcutter.gui.app
 ```
 
-### スタンドアロンアプリ
+### スタンドアロンアプリ（Briefcase）
 
 ```bash
-# py2appをインストール
-pip install py2app
-
-# .appバンドルをビルド
-python setup_gui.py py2app
+# アプリのビルド
+uv run briefcase update macOS app
+uv run briefcase build macOS app
 
 # 実行
-open dist/JetCutter.app
+open ./build/jetcutter/macos/app/JetCutter.app
+
+# DMGパッケージの作成
+uv run briefcase package macOS app --adhoc-sign
 ```
 
 ## 機能
@@ -64,9 +65,10 @@ open dist/JetCutter.app
 
 ## 必要要件
 
-- macOS 10.15以降
+- macOS 11.0以降
 - Python 3.10以上
 - ffmpeg（Homebrew: `brew install ffmpeg`）
+- PyObjC（GUI依存関係に含まれる）
 
 ## 注意事項
 
@@ -97,40 +99,36 @@ DaVinci Resolve連携を使用する場合は、DaVinci Resolve Studio（有償�
 brew install ffmpeg
 ```
 
-### PySimpleGUI4がインストールできない
+### PyObjCがインストールできない
 
 ```bash
 # pipで直接インストール
-pip install PySimpleGUI4
+pip install pyobjc-core pyobjc-framework-Cocoa
 ```
 
-### py2appビルドが失敗する
+### Briefcaseビルドが失敗する
 
 ```bash
 # クリーンビルド
-rm -rf build dist
-python setup_gui.py py2app
+rm -rf build
+uv run briefcase create macOS app
+uv run briefcase build macOS app
 ```
 
-## 最近の更新 (2026-01-02)
+## 最近の更新
 
-### UI改善
+### v1.1.0 (2026-01-02)
 
+- ✅ Aboutダイアログ追加（バージョン・ライセンス情報表示）
+- ✅ ライセンスコンプライアンス対応（LICENSES/, THIRD_PARTY_LICENSES.md）
+- ✅ DMGパッケージング対応（GitHub Releasesで配布）
+
+### v1.0.0 (2026-01-02)
+
+- ✅ PyObjC + AppKitによるmacOSネイティブGUIに移行
 - ✅ 「出力モード」表記に変更（選択肢: FCPX / DR）
 - ✅ 処理中のUI要素消失バグを修正
 - ✅ 結果タブに処理時間を追加（MM:SS.SS形式）
-
-### FCPXML互換性の改善
-
 - ✅ FCPXML 1.10 DTD準拠（Final Cut Pro Xへの正常インポート）
 - ✅ DJIドローン映像のタイムコード対応
 - ✅ 動画からFPSを自動検出（59.94fps等に対応）
-
-### 改善された処理
-
-| 機能 | 説明 |
-|------|------|
-| 自動FPS検出 | ffprobeを使用して動画の実際のFPSを取得 |
-| タイムコード対応 | 00:00:00:00以外の開始タイムコードをサポート |
-| メディア参照修正 | FCPXML内のメディアパス参照を正確に生成 |
-| 処理時間表示 | 処理開始から完了までの経過時間を表示 |

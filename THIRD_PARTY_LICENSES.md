@@ -15,23 +15,8 @@ This document lists the third-party libraries used by JetCutter and their respec
 | loguru | MIT | Logging |
 | typer | MIT | CLI framework |
 | rich | MIT | Terminal formatting |
-| PySimpleGUI4 | LGPL-3.0 | Legacy GUI (see special notice below) |
 | pyobjc-core | MIT | Python-Objective-C bridge |
 | pyobjc-framework-Cocoa | MIT | macOS Cocoa framework bindings |
-
-## Special Notice: PySimpleGUI4 (LGPL-3.0)
-
-PySimpleGUI4 is distributed under the GNU Lesser General Public License v3.0 (LGPL-3.0).
-
-As required by LGPL-3.0:
-- The complete source code for PySimpleGUI4 can be obtained from: https://github.com/PySimpleGUI/PySimpleGUI
-- The full text of the LGPL-3.0 license is available in `LICENSES/LGPL-3.0.txt`
-- The full text of the GPL-3.0 license (referenced by LGPL-3.0) is available in `LICENSES/GPL-3.0.txt`
-
-JetCutter uses PySimpleGUI4 as a dynamically linked library, which means:
-- You have the right to modify or replace the PySimpleGUI4 library
-- The library is located in `Contents/Resources/app_packages/` within the application bundle
-- Your modifications to JetCutter itself are not required to be licensed under LGPL/GPL
 
 ## External Tools
 
@@ -103,14 +88,6 @@ The following packages are licensed under the MIT License:
 - Copyright (c) 2002-2023 Ronald Oussoren
 - https://github.com/ronaldoussoren/pyobjc
 
-### LGPL-3.0 Licensed Packages
-
-**PySimpleGUI4**
-- Copyright (c) 2018-2023 PySimpleGUI
-- https://github.com/PySimpleGUI/PySimpleGUI
-- License: LGPL-3.0
-- See `LICENSES/LGPL-3.0.txt` for the full license text
-
 ---
 
-For the full text of each license, see the `LICENSES/` directory.
+For the full text of the MIT license, see `LICENSES/MIT.txt`.

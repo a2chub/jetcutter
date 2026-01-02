@@ -281,9 +281,6 @@ DaVinci Resolve / Final Cut Pro 向け
 Copyright (c) 2024 JetCutter Contributors
 Licensed under MIT License
 
-PySimpleGUI4 is licensed under LGPL-3.0.
-詳細は THIRD_PARTY_LICENSES.md をご確認ください。
-
 https://github.com/a2chub/jetcutter"""
 
         alert = NSAlert.alloc().init()

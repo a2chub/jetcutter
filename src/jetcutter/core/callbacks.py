@@ -2,7 +2,7 @@
 callbacks - プログレスコールバックプロトコル
 
 UI非依存のプログレス報告インターフェースを定義。
-CLIはRich、GUIはPySimpleGUI用のアダプタを実装する。
+CLIはRich、GUIはPyObjC/AppKit用のアダプタを実装する。
 """
 
 from __future__ import annotations
