@@ -329,10 +329,9 @@ class EventHandler:
             self._window["-STATUS-TEXT-"].update("処理を準備中...")
         # else: 処理完了時はプログレスバーを100%のまま維持（_handle_completeで更新）
 
-        # 入力要素を無効化/有効化
-        self._window["-VIDEO-PATH-"].update(disabled=processing)
-        self._window["-EDITOR-FCP-"].update(disabled=processing)
-        self._window["-EDITOR-DAVINCI-"].update(disabled=processing)
+        # NOTE: PySimpleGUI4のRadioとInputでdisabled=Trueを使うと
+        # 要素が非表示になるバグがあるため、無効化処理は行わない。
+        # 処理開始時にバリデーション済みなので、処理中の変更は無視される。
 
         self._window.refresh()
 

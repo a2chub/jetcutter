@@ -48,18 +48,16 @@ def create_process_tab(config: AppConfig) -> list[list[sg.Element]]:
         ],
         [sg.Text("対応形式: .mp4, .mov, .avi, .mkv, .webm", font=("", 9), text_color="gray")],
         [sg.HorizontalSeparator()],
-        [sg.Text("エクスポート先", font=("", 12, "bold"))],
+        [sg.Text("出力モード", font=("", 12, "bold"))],
         [
             sg.Radio(
-                "Final Cut Pro (.fcpxml)",
+                "FCPX",
                 "EDITOR",
                 key="-EDITOR-FCP-",
                 default=(default_editor == "fcp"),
             ),
-        ],
-        [
             sg.Radio(
-                "DaVinci Resolve",
+                "DR",
                 "EDITOR",
                 key="-EDITOR-DAVINCI-",
                 default=(default_editor == "davinci"),
