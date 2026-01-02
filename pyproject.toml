@@ -92,6 +92,8 @@ module = [
     "faster_whisper.*",
     "PySimpleGUI.*",
     "PySimpleGUI4.*",
+    "AppKit.*",
+    "objc.*",
 ]
 ignore_missing_imports = true
 

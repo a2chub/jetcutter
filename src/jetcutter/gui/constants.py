@@ -1,54 +1,68 @@
 """
 constants - GUI定数定義
 
-ウィンドウサイズ、色、フォントなどのUI定数。
+ビジネスロジック定数とAppKit固有の定数を定義。
 """
 
-# ウィンドウ設定
+# ========== ウィンドウ設定 ==========
 WINDOW_TITLE = "JetCutter"
-WINDOW_SIZE = (700, 550)
+WINDOW_WIDTH = 700
+WINDOW_HEIGHT = 550
+WINDOW_MIN_WIDTH = 600
+WINDOW_MIN_HEIGHT = 450
 
-# サポートする動画形式
-VIDEO_EXTENSIONS = ("mp4", "MP4", "mov", "MOV", "avi", "AVI", "mkv", "MKV", "webm", "WEBM")
-VIDEO_FILE_TYPES = (("Video Files", "*.mp4 *.MP4 *.mov *.MOV *.avi *.mkv *.webm"),)
-
-# 処理ステージ名（日本語）
+# ========== 処理ステージ ==========
 STAGE_NAMES = {
-    "Extracting audio...": "音声を抽出中...",
-    "Detecting silence...": "無音区間を検出中...",
-    "Detecting fillers...": "フィラーを検出中...",
-    "Calculating keep segments...": "保持区間を計算中...",
+    "extract": "音声抽出中...",
+    "silence": "無音検知中...",
+    "transcribe": "文字起こし中...",
+    "filler": "フィラー検知中...",
+    "merge": "セグメント統合中...",
+    "export": "エクスポート中...",
 }
 
-# プログレスパーセンテージ
 STAGE_PROGRESS = {
-    "Extracting audio...": 10,
-    "Detecting silence...": 35,
-    "Detecting fillers...": 80,
-    "Calculating keep segments...": 95,
+    "extract": 10,
+    "silence": 30,
+    "transcribe": 50,
+    "filler": 70,
+    "merge": 85,
+    "export": 95,
 }
 
-# Whisperモデル選択肢
+# ========== エディタ選択 ==========
+EDITOR_FCP = "fcp"
+EDITOR_DAVINCI = "davinci"
+EDITOR_LABELS = {
+    EDITOR_FCP: "Final Cut Pro",
+    EDITOR_DAVINCI: "DaVinci Resolve",
+}
+
+# ========== Whisperモデル ==========
 WHISPER_MODELS = ["tiny", "base", "small", "medium", "large-v3"]
+DEFAULT_MODEL = "large-v3"
 
-# 言語選択肢
-LANGUAGES = [
-    ("日本語", "ja"),
-    ("英語", "en"),
-    ("中国語", "zh"),
-    ("韓国語", "ko"),
-]
+# ========== 言語 ==========
+LANGUAGES = {
+    "日本語": "ja",
+    "English": "en",
+    "中文": "zh",
+    "한국어": "ko",
+}
+DEFAULT_LANGUAGE = "日本語"
 
-# デバイス選択肢
-DEVICES = ["auto", "cuda", "cpu"]
+# ========== デバイス ==========
+DEVICES = {
+    "自動": "auto",
+    "CUDA (GPU)": "cuda",
+    "CPU": "cpu",
+}
+DEFAULT_DEVICE = "自動"
 
-# エディタ選択肢
-EDITORS = [
-    ("Final Cut Pro", "fcp"),
-    ("DaVinci Resolve", "davinci"),
-]
+# ========== ファイルタイプ ==========
+VIDEO_EXTENSIONS = ["mp4", "mov", "avi", "mkv", "webm", "m4v"]
 
-# セグメントタイプの日本語表示
+# ========== セグメントタイプ表示 ==========
 SEGMENT_TYPE_NAMES = {
     "SILENCE": "無音",
     "FILLER": "フィラー",
@@ -56,19 +70,25 @@ SEGMENT_TYPE_NAMES = {
     "CUT": "カット",
 }
 
-# テーブルヘッダー
+# ========== テーブル設定 ==========
 SEGMENT_TABLE_HEADINGS = ["#", "種別", "開始", "終了", "長さ"]
-SEGMENT_TABLE_COL_WIDTHS = [5, 10, 12, 12, 12]
 
-# イベントキー
-EVENT_BROWSE_VIDEO = "-BROWSE-VIDEO-"
-EVENT_BROWSE_OUTPUT = "-BROWSE-OUTPUT-"
-EVENT_START = "-START-"
-EVENT_CANCEL = "-CANCEL-"
-EVENT_SAVE_SETTINGS = "-SAVE-SETTINGS-"
-EVENT_LOAD_DEFAULTS = "-LOAD-DEFAULTS-"
-EVENT_STAGE = "-STAGE-"
-EVENT_PROGRESS = "-PROGRESS-"
-EVENT_COMPLETE = "-COMPLETE-"
-EVENT_ERROR = "-ERROR-"
-EVENT_CANCELLED = "-CANCELLED-"
+# ========== UI定数 (Apple HIG準拠) ==========
+MARGIN = 20
+SECTION_SPACING = 24
+ITEM_SPACING = 8
+ROW_HEIGHT = 26
+LABEL_HEIGHT = 17
+FIELD_HEIGHT = 22
+BUTTON_HEIGHT = 32
+
+# ========== タブ識別子 ==========
+TAB_PROCESS = "process"
+TAB_SETTINGS = "settings"
+TAB_RESULTS = "results"
+
+TAB_LABELS = {
+    TAB_PROCESS: "処理",
+    TAB_SETTINGS: "設定",
+    TAB_RESULTS: "結果",
+}

@@ -1,9 +1,14 @@
 """
-gui - JetCutter macOS GUI アプリケーション
+gui - JetCutter macOSネイティブGUIモジュール
 
-PySimpleGUI4を使用したグラフィカルユーザーインターフェース。
+PyObjC + AppKitを使用したmacOSネイティブGUI。
 """
 
-from jetcutter.gui.app import main
+
+def main() -> int:
+    """GUIアプリケーションを起動（遅延インポート）"""
+    from jetcutter.gui.app import main as _main
+    return _main()
+
 
 __all__ = ["main"]
