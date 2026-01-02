@@ -86,6 +86,10 @@ class FCPTime:
         Returns:
             Time string like "1001/30000s" or "5s" for whole seconds
 
+        Note:
+            FCPXMLではframe durationの分母と一致させる必要がある場合があるため、
+            frame_durationの分母を基準にして出力する。
+
         Examples:
             >>> fcp_time = FCPTime(Fraction(1001, 30000), Fraction(1001, 30000))
             >>> fcp_time.to_fcpxml_string()
@@ -94,11 +98,24 @@ class FCPTime:
             >>> fcp_time.to_fcpxml_string()
             '5s'
         """
-        # If denominator is 1, use simplified format
+        # If value is 0, return "0s"
+        if self.value == 0:
+            return "0s"
+
+        # If denominator is 1 (whole seconds), use simplified format
         if self.value.denominator == 1:
             return f"{self.value.numerator}s"
 
-        return f"{self.value.numerator}/{self.value.denominator}s"
+        # FCPXMLではframe durationの分母と一致させる
+        # frame_duration = 1001/60000 の場合、分母は60000を使用
+        target_denominator = self.frame_duration.denominator
+
+        # 値を target_denominator 基準に変換
+        # value = n/d -> n * (target_denominator/d) / target_denominator
+        # ただしフレーム境界に揃っている場合は整数になる
+        numerator = int(self.value * target_denominator)
+
+        return f"{numerator}/{target_denominator}s"
 
     @classmethod
     def from_ms(cls, ms: int, fps: float) -> FCPTime:

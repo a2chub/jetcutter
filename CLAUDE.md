@@ -32,6 +32,7 @@ mypy src/
 ruff format src/ --check
 
 # CLI commands
+jetcutter gui                         # Launch macOS GUI application
 jetcutter process input.mp4           # Process video → DaVinci Resolve
 jetcutter analyze input.mp4           # Analyze without export
 jetcutter export input.mp4 -o out.fcpxml  # Generate FCPXML
@@ -57,6 +58,8 @@ Video → Audio Extraction (ffmpeg) → Silence Detection (pydub)
 | `src/jetcutter/exporters/` | Abstract base classes and factory pattern for exporters |
 | `src/jetcutter/davinci/` | DaVinci Resolve API integration (requires Studio version) |
 | `src/jetcutter/fcp/` | FCPXML v1.10 generation for Final Cut Pro |
+| `src/jetcutter/gui/` | macOS GUI application with PySimpleGUI4 |
+| `src/jetcutter/core/` | Core processing pipeline |
 
 ### Exporter Architecture (Plugin Pattern)
 - `BaseTimelineExporter` → abstract base
@@ -115,3 +118,48 @@ Core docs in `docs/davinci_resolve_auto_editor/`:
 - `test:` - テスト
 - `refactor:` - リファクタリング
 - `chore:` - その他
+
+## Best Practices & Lessons Learned
+
+### FCPXML生成
+
+1. **FCPXML 1.10 DTD準拠**
+   - `asset`要素には`src`属性を直接設定不可 → `media-rep`子要素を使用
+   - `format`要素には`name`属性が必須（例: `FFVideoFormat1080p60`）
+   - 分数の分母はフレームデュレーションと一致させる
+
+2. **タイムコード対応**
+   - DJI等のカメラは00:00:00:00以外のタイムコードで記録する場合がある
+   - ffprobeでタイムコードを取得し、`asset`と`asset-clip`の`start`属性に反映
+
+3. **FPS自動検出**
+   - 動画のFPSはffprobeで取得（設定値より優先）
+   - 59.94fps等の高フレームレートに対応
+
+### GUI開発
+
+1. **PySimpleGUI4の制約**
+   - `write_event_value`を使用してスレッド間通信
+   - Tkinterウィジェットの直接操作が必要な場合あり
+
+2. **バックグラウンド処理**
+   - 長時間処理は別スレッドで実行
+   - `threading.Event`でキャンセル処理を実装
+
+## Project Status
+
+**Current Status**: ✅ GUI + FCPXML機能完成
+
+| 機能 | 状態 | テスト |
+|------|------|--------|
+| 無音検知 | ✅ 完成 | - |
+| フィラー検知 | ✅ 完成 | - |
+| FCPXML生成 | ✅ 完成 | 43テスト合格 (97%カバレッジ) |
+| DaVinci連携 | ✅ 完成 | - |
+| macOS GUI | ✅ 完成 | - |
+
+**Latest Updates** (2026-01-02):
+- ✅ FCPXML 1.10 DTD準拠修正
+- ✅ DJIタイムコード対応
+- ✅ 自動FPS検出
+- ✅ `jetcutter gui` CLIコマンド追加

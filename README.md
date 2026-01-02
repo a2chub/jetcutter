@@ -7,11 +7,13 @@
 
 ## 特徴
 
+- 🖥️ **GUIアプリ**: macOS向けの直感的なグラフィカルインターフェース
 - 🎬 **無音区間の自動検知**: 音量ベースで無音区間をミリ秒単位で特定
 - 🗣️ **フィラー検知**: faster-whisperによる高精度な音声認識でフィラー単語を検出
 - ✂️ **スマートカットロジック**: マージン設定やフレームアライン対応
 - 🎥 **マルチNLE対応**: DaVinci Resolve（Scripting API）とFinal Cut Pro（FCPXML）をサポート
 - 📁 **バッチ処理**: フォルダ内の複数動画を一括処理
+- 🎞️ **自動FPS検出**: 動画のフレームレートを自動検出してFCPXMLに反映
 
 ## システム要件
 
@@ -42,7 +44,30 @@ uv pip install -e ".[dev]"
 
 ## クイックスタート
 
-### 1. 設定ファイルの準備
+### GUIアプリ（推奨）
+
+最も簡単な使い方は、GUIアプリを起動することです：
+
+```bash
+# GUIアプリを起動
+jetcutter gui
+```
+
+または直接Pythonモジュールとして実行：
+
+```bash
+uv run python -m jetcutter.gui.app
+```
+
+GUIでは以下の操作が可能です：
+1. 動画ファイルを選択
+2. 出力先エディタ（Final Cut Pro / DaVinci Resolve）を選択
+3. 「処理開始」をクリック
+4. 生成されたFCPXMLをFinal Cut Proにインポート
+
+### CLIを使用する場合
+
+#### 1. 設定ファイルの準備
 
 ```bash
 # デフォルト設定ファイルを生成
@@ -64,17 +89,17 @@ margin:
   before_ms: 100         # 開始前バッファ（ms）
   after_ms: 100          # 終了後バッファ（ms）
 
-fps: 29.97
+fps: 29.97  # デフォルト値（動画から自動検出されます）
 ```
 
-### 2. 動画を処理
+#### 2. 動画を処理
 
 ```bash
 # DaVinci Resolveを起動した状態で実行
 jetcutter process input.mp4
 ```
 
-### 3. バッチ処理
+#### 3. バッチ処理
 
 ```bash
 jetcutter batch ./videos --pattern "*.mp4"
@@ -82,7 +107,34 @@ jetcutter batch ./videos --pattern "*.mp4"
 
 ## 使用方法
 
-### DaVinci Resolve用
+### GUIアプリ
+
+macOS向けのグラフィカルインターフェースを提供しています。
+
+```bash
+# GUIアプリを起動
+jetcutter gui
+
+# または
+uv run python -m jetcutter.gui.app
+```
+
+#### GUIの機能
+
+- **処理タブ**: 動画ファイルの選択と処理の実行
+- **設定タブ**: 無音検知、フィラー検知、マージン設定のカスタマイズ
+- **結果タブ**: 処理結果の確認（無音区間、フィラー区間、保持区間の一覧）
+
+#### 処理フロー
+
+1. 動画ファイルを選択（ドラッグ＆ドロップまたはファイル選択）
+2. 出力先エディタを選択（Final Cut Pro / DaVinci Resolve）
+3. 必要に応じて設定タブでパラメータを調整
+4. 「処理開始」ボタンをクリック
+5. 処理完了後、結果タブで詳細を確認
+6. 生成されたFCPXMLファイルをFinal Cut Proにインポート
+
+### DaVinci Resolve用（CLI）
 
 ```bash
 # 単一動画を処理
@@ -98,7 +150,7 @@ jetcutter batch FOLDER_PATH [OPTIONS]
 jetcutter config show
 ```
 
-### Final Cut Pro用
+### Final Cut Pro用（CLI）
 
 ```bash
 # 動画を処理してFCPXMLを生成
@@ -196,6 +248,9 @@ fillers:
 - [システム要件定義書](docs/davinci_resolve_auto_editor/requirements.md)
 - [アーキテクチャ設計書](docs/davinci_resolve_auto_editor/architecture.md)
 - [APIリファレンス](docs/davinci_resolve_auto_editor/api_reference.md)
+
+### GUIアプリ
+- [GUIユーザーガイド](docs/gui/README.md)
 
 ### Final Cut Pro
 - [FCP統合ガイド](docs/davinci_resolve_auto_editor/fcp_integration.md)

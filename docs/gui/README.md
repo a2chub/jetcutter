@@ -2,7 +2,14 @@
 
 macOS向けのグラフィカルユーザーインターフェース。
 
-## インストール
+## 起動方法
+
+### CLIコマンド（推奨）
+
+```bash
+# 最もシンプルな起動方法
+jetcutter gui
+```
 
 ### 開発環境
 
@@ -10,7 +17,7 @@ macOS向けのグラフィカルユーザーインターフェース。
 # GUI依存関係をインストール
 uv pip install -e ".[gui]"
 
-# 起動
+# Pythonモジュールとして起動
 uv run python -m jetcutter.gui.app
 ```
 
@@ -104,3 +111,19 @@ pip install PySimpleGUI4
 rm -rf build dist
 python setup_gui.py py2app
 ```
+
+## 最近の更新 (2026-01-02)
+
+### FCPXML互換性の改善
+
+- ✅ FCPXML 1.10 DTD準拠（Final Cut Pro Xへの正常インポート）
+- ✅ DJIドローン映像のタイムコード対応
+- ✅ 動画からFPSを自動検出（59.94fps等に対応）
+
+### 改善された処理
+
+| 機能 | 説明 |
+|------|------|
+| 自動FPS検出 | ffprobeを使用して動画の実際のFPSを取得 |
+| タイムコード対応 | 00:00:00:00以外の開始タイムコードをサポート |
+| メディア参照修正 | FCPXML内のメディアパス参照を正確に生成 |

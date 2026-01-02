@@ -617,5 +617,25 @@ def check() -> None:
         raise typer.Exit(1) from None
 
 
+@app.command()
+def gui() -> None:
+    """
+    GUIアプリを起動する（macOS専用）
+    """
+    try:
+        from jetcutter.gui.app import main as gui_main
+
+        console.print("[dim]Starting JetCutter GUI...[/dim]")
+        gui_main()
+    except ImportError as e:
+        console.print(f"[red]GUI module not available:[/red] {e}")
+        console.print("\n[yellow]Hint:[/yellow] GUI requires PySimpleGUI4 package")
+        console.print("  Install with: pip install PySimpleGUI4")
+        raise typer.Exit(1) from None
+    except Exception as e:
+        console.print(f"[red]Failed to start GUI:[/red] {e}")
+        raise typer.Exit(1) from None
+
+
 if __name__ == "__main__":
     app()

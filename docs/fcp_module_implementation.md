@@ -2,12 +2,12 @@
 
 ## Overview
 
-The Final Cut Pro module provides complete FCPXML v1.10 export functionality for the jetDR project. This module enables exporting video editing segments to a format that can be imported directly into Final Cut Pro.
+The Final Cut Pro module provides complete FCPXML v1.10 export functionality for the JetCutter project. This module enables exporting video editing segments to a format that can be imported directly into Final Cut Pro.
 
 ## Module Structure
 
 ```
-/Users/atusi/repos/jetDR/src/jetdr/fcp/
+src/jetcutter/fcp/
 ├── __init__.py          # Package initialization and public API
 ├── time_utils.py        # Frame-accurate time calculations
 ├── fcpxml_builder.py    # FCPXML document generation
@@ -319,22 +319,54 @@ The FCP module integrates seamlessly with the jetDR pipeline:
 
 The module has been tested with:
 
-- ✓ Time utilities with various frame rates
-- ✓ FCPTime conversions (ms, frames, seconds)
-- ✓ FCPXML generation with sample segments
-- ✓ Export to string functionality
-- ✓ Full export workflow with file writing
-- ✓ Configuration validation
-- ✓ XML validation
+- ✅ Time utilities with various frame rates (43 tests passing)
+- ✅ FCPTime conversions (ms, frames, seconds)
+- ✅ FCPXML generation with sample segments
+- ✅ Export to string functionality
+- ✅ Full export workflow with file writing
+- ✅ Configuration validation
+- ✅ XML validation
+- ✅ Timecode parsing for DJI cameras (non-zero start timecode)
+- ✅ FPS auto-detection from video metadata
+
+**Test Coverage** (as of 2026-01-02):
+- `fcp/time_utils.py`: 97%
+- `fcp/exporter.py`: 92%
+- `fcp/fcpxml_builder.py`: 88%
 
 ## Dependencies
 
 - `fractions` (standard library): Exact time calculations
 - `xml.etree.ElementTree` (standard library): XML generation
 - `pathlib` (standard library): Path handling
-- `jetdr.editor.segment`: Segment data model
-- `jetdr.exporters.base`: Base exporter classes
-- `jetdr.utils.logger`: Logging utilities
+- `jetcutter.editor.segment`: Segment data model
+- `jetcutter.exporters.base`: Base exporter classes
+- `jetcutter.utils.logger`: Logging utilities
+
+## Recent Updates (2026-01-02)
+
+### FCPXML 1.10 DTD Compliance
+
+Fixed multiple DTD validation errors for Final Cut Pro X import:
+
+1. **media-rep child element**: `asset` element now uses `media-rep` child for `src` instead of direct attribute
+2. **format name attribute**: Added `name` attribute to `format` element (e.g., `FFVideoFormat1080p60`)
+3. **Fraction denominator consistency**: Time values now use consistent denominators matching frame duration
+
+### Timecode Support
+
+Added support for videos with non-zero starting timecodes:
+
+- DJI cameras record with actual time-of-day as timecode (e.g., `10:09:11;27`)
+- `_parse_timecode()` method in `AudioExtractor` parses timecode strings
+- `asset` element's `start` attribute reflects actual timecode
+- `asset-clip` elements use timecode-based source positions
+
+### Auto FPS Detection
+
+- Video FPS is now automatically detected using ffprobe
+- Fallback to configured FPS if detection fails
+- Supports all common frame rates including 59.94fps for DJI drones
 
 ## Future Enhancements
 
@@ -365,4 +397,10 @@ All required files have been implemented with full functionality:
 - ✅ FCPXML builder (`fcpxml_builder.py`)
 - ✅ FCP exporter (`exporter.py`)
 
-The module is ready for use in the jetDR project.
+**Recent Fixes**:
+- ✅ FCPXML 1.10 DTD compliance (media-rep, format name)
+- ✅ Timecode support for DJI cameras
+- ✅ Auto FPS detection
+- ✅ Fraction denominator consistency
+
+The module is ready for use in the JetCutter project.

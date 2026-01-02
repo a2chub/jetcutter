@@ -54,6 +54,10 @@ class FCPXMLBuilder:
         self.event_name = metadata.get("event_name", "JetCutter Event")
         self.project_name = metadata.get("project_name", config.output_name)
 
+        # タイムコード開始位置（ミリ秒）
+        # DJI等のカメラは00:00:00:00以外のタイムコードで記録することがある
+        self.timecode_start_ms = metadata.get("timecode_start_ms", 0)
+
     def build(self, segments: list[Segment]) -> ET.Element:
         """
         Build complete FCPXML element tree.
@@ -75,8 +79,23 @@ class FCPXMLBuilder:
         # Create root element
         root = ET.Element("fcpxml", version=self.FCPXML_VERSION)
 
+        # 総duration計算
+        # 優先順位: 1. メタデータの実際の動画長 2. セグメントから計算 + バッファ
+        metadata = self.config.metadata or {}
+        actual_duration_ms = metadata.get("actual_duration_ms", 0)
+
+        if actual_duration_ms > 0:
+            # 実際の動画長を使用（ffprobeから取得した値）
+            # フレーム境界の丸め誤差を考慮して少しのバッファを追加
+            total_duration_ms = actual_duration_ms + 500
+            logger.debug(f"Using actual video duration: {actual_duration_ms}ms + 500ms buffer")
+        else:
+            # フォールバック: セグメントから計算 + バッファ
+            total_duration_ms = max(seg.end_ms for seg in segments) + 1000
+            logger.debug(f"Using segment-based duration: {total_duration_ms}ms")
+
         # Add resources
-        resources = self._build_resources()
+        resources = self._build_resources(total_duration_ms)
         root.append(resources)
 
         # Add library structure
@@ -85,9 +104,12 @@ class FCPXMLBuilder:
 
         return root
 
-    def _build_resources(self) -> ET.Element:
+    def _build_resources(self, total_duration_ms: int) -> ET.Element:
         """
         Build resources section with format and asset.
+
+        Args:
+            total_duration_ms: Total duration of the video in milliseconds
 
         Returns:
             resources Element
@@ -95,28 +117,52 @@ class FCPXMLBuilder:
         resources = ET.Element("resources")
 
         # Format resource
+        # name属性でフォーマットを識別（FCPが認識できる形式）
+        format_name = f"FFVideoFormat{self.height}p{int(round(self.fps))}"
         ET.SubElement(
             resources,
             "format",
             id=self.format_id,
+            name=format_name,
             frameDuration=format_frame_duration(self.fps),
             width=str(self.width),
             height=str(self.height),
         )
 
-        # Asset resource
-        video_uri = self._path_to_uri(self.config.video_path)
+        # Asset resource (FCPXML 1.10準拠)
+        # Note: FCPXML 1.10ではasset要素にsrc属性を直接設定できない
+        # srcはmedia-rep子要素に設定する必要がある
+        duration_time = FCPTime.from_ms(total_duration_ms, self.fps)
+
+        # アセットの開始タイムコードを設定
+        # DJI等のカメラは00:00:00:00以外のタイムコードで記録することがある
+        if self.timecode_start_ms > 0:
+            asset_start_time = FCPTime.from_ms(self.timecode_start_ms, self.fps)
+            asset_start_str = asset_start_time.to_fcpxml_string()
+            logger.debug(f"Asset start timecode: {asset_start_str}")
+        else:
+            asset_start_str = "0s"
+
         asset_elem = ET.SubElement(
             resources,
             "asset",
             id=self.asset_id,
-            src=video_uri,
+            name=self.config.video_path.stem if self.config.video_path else "Video",
             format=self.format_id,
+            start=asset_start_str,
+            duration=duration_time.to_fcpxml_string(),
+            hasVideo="1",
+            hasAudio="1",
         )
 
-        # Add video name if available
-        if self.config.video_path:
-            asset_elem.set("name", self.config.video_path.stem)
+        # media-rep子要素を追加（srcはここに設定）
+        video_uri = self._path_to_uri(self.config.video_path)
+        ET.SubElement(
+            asset_elem,
+            "media-rep",
+            kind="original-media",
+            src=video_uri,
+        )
 
         logger.debug(f"Created resources: format={self.format_id}, asset={self.asset_id}")
 
@@ -162,34 +208,47 @@ class FCPXMLBuilder:
         spine = ET.SubElement(sequence, "spine")
 
         # Add asset-clip for each segment
+        # offsetはタイムライン上の累積位置
+        timeline_offset_ms = 0
         for idx, segment in enumerate(segments):
-            clip = self._build_asset_clip(segment, idx)
+            clip = self._build_asset_clip(segment, idx, timeline_offset_ms)
             spine.append(clip)
+            timeline_offset_ms += segment.duration_ms
 
         logger.debug(f"Created sequence with {len(segments)} clips in spine")
 
         return sequence
 
-    def _build_asset_clip(self, segment: Segment, index: int) -> ET.Element:
+    def _build_asset_clip(
+        self, segment: Segment, index: int, timeline_offset_ms: int
+    ) -> ET.Element:
         """
         Build asset-clip element for a segment.
 
         Args:
             segment: Segment to convert to clip
             index: Clip index for naming
+            timeline_offset_ms: Offset position in the timeline (cumulative)
 
         Returns:
             asset-clip Element
         """
         # Calculate times
-        start_time = FCPTime.from_ms(segment.start_ms, self.fps)
+        # offset: タイムライン上の位置（累積）
+        # start: ソースメディア内の位置（タイムコードベース）
+        offset_time = FCPTime.from_ms(timeline_offset_ms, self.fps)
         duration_time = FCPTime.from_ms(segment.duration_ms, self.fps)
+
+        # ソースメディア内の開始位置にタイムコードオフセットを追加
+        # asset.startと同じタイムコードベースで指定する必要がある
+        source_start_ms = self.timecode_start_ms + segment.start_ms
+        start_time = FCPTime.from_ms(source_start_ms, self.fps)
 
         # Create asset-clip
         clip = ET.Element(
             "asset-clip",
             ref=self.asset_id,
-            offset=start_time.to_fcpxml_string(),
+            offset=offset_time.to_fcpxml_string(),
             duration=duration_time.to_fcpxml_string(),
         )
 

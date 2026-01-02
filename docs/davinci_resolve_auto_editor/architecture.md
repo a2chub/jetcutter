@@ -1,8 +1,12 @@
-# システムアーキテクチャ設計書：DaVinci Resolve 自動編集エージェント
+# システムアーキテクチャ設計書：JetCutter 自動編集エージェント
 
 ## 1. アーキテクチャ概要
 
 本システムは、モジュール化されたPythonアプリケーションとして設計される。各機能は独立したモジュールとして実装し、疎結合な構成により拡張性と保守性を確保する。
+
+### 1.0 プロジェクト改名
+- **旧名**: jetDR / jetFCP
+- **新名**: JetCutter（2026年より統一名称）
 
 ### 1.1 設計原則
 - **単一責任の原則**: 各モジュールは1つの責務のみを持つ
@@ -14,51 +18,57 @@
 ## 2. ディレクトリ構成
 
 ```
-jetDR/
+jetcutter/
 ├── src/
-│   ├── jetdr/
-│   │   ├── __init__.py
-│   │   ├── main.py              # エントリーポイント・CLI
-│   │   ├── config/
-│   │   │   ├── __init__.py
-│   │   │   ├── settings.py      # 設定管理クラス
-│   │   │   └── defaults.yaml    # デフォルト設定
-│   │   ├── audio/
-│   │   │   ├── __init__.py
-│   │   │   ├── extractor.py     # 音声抽出
-│   │   │   └── analyzer.py      # 無音検知
-│   │   ├── speech/
-│   │   │   ├── __init__.py
-│   │   │   ├── transcriber.py   # 音声認識
-│   │   │   └── filler_detector.py # フィラー検知
-│   │   ├── editor/
-│   │   │   ├── __init__.py
-│   │   │   ├── segment.py       # 区間データモデル
-│   │   │   └── merger.py        # 区間マージロジック
-│   │   ├── davinci/
-│   │   │   ├── __init__.py
-│   │   │   ├── connection.py    # DR接続管理
-│   │   │   ├── project.py       # プロジェクト操作
-│   │   │   ├── media_pool.py    # メディアプール操作
-│   │   │   ├── timeline_builder.py # タイムライン構築
-│   │   │   └── exporter.py      # DaVinciExporter [NEW]
-│   │   ├── exporters/           # [NEW] エクスポーター抽象化
-│   │   │   ├── __init__.py      # 自動登録
-│   │   │   ├── base.py          # 抽象基底クラス
-│   │   │   └── factory.py       # ExporterRegistry
-│   │   ├── fcp/                 # [NEW] Final Cut Pro対応
-│   │   │   ├── __init__.py      # パッケージAPI
-│   │   │   ├── time_utils.py    # フレーム精度時間計算
-│   │   │   ├── fcpxml_builder.py # FCPXML生成
-│   │   │   └── exporter.py      # FCPExporter
-│   │   └── utils/
-│   │       ├── __init__.py
-│   │       ├── logger.py        # ログ設定
-│   │       ├── time_utils.py    # 時間変換ユーティリティ
-│   │       └── file_utils.py    # ファイル操作ユーティリティ
-│   └── jetfcp/                  # [NEW] FCP専用CLI
+│   └── jetcutter/
 │       ├── __init__.py
-│       └── main.py              # export, analyze, validate
+│       ├── main.py              # エントリーポイント・CLI (gui/process/export/validate)
+│       ├── config/
+│       │   ├── __init__.py
+│       │   ├── settings.py      # 設定管理クラス
+│       │   └── defaults.yaml    # デフォルト設定
+│       ├── audio/
+│       │   ├── __init__.py
+│       │   ├── extractor.py     # 音声抽出 + 動画メタデータ取得
+│       │   └── analyzer.py      # 無音検知
+│       ├── speech/
+│       │   ├── __init__.py
+│       │   ├── transcriber.py   # 音声認識
+│       │   └── filler_detector.py # フィラー検知
+│       ├── editor/
+│       │   ├── __init__.py
+│       │   ├── segment.py       # 区間データモデル
+│       │   └── merger.py        # 区間マージロジック
+│       ├── davinci/
+│       │   ├── __init__.py
+│       │   ├── connection.py    # DR接続管理
+│       │   ├── project.py       # プロジェクト操作
+│       │   ├── media_pool.py    # メディアプール操作
+│       │   ├── timeline_builder.py # タイムライン構築
+│       │   └── exporter.py      # DaVinciExporter
+│       ├── exporters/           # エクスポーター抽象化
+│       │   ├── __init__.py      # 自動登録
+│       │   ├── base.py          # 抽象基底クラス
+│       │   └── factory.py       # ExporterRegistry
+│       ├── fcp/                 # Final Cut Pro対応
+│       │   ├── __init__.py      # パッケージAPI
+│       │   ├── time_utils.py    # フレーム精度時間計算
+│       │   ├── fcpxml_builder.py # FCPXML生成 (FCPXML 1.10準拠)
+│       │   └── exporter.py      # FCPExporter
+│       ├── gui/                 # macOS GUIアプリ
+│       │   ├── __init__.py
+│       │   ├── app.py           # メインアプリケーション
+│       │   ├── window.py        # ウィンドウレイアウト
+│       │   ├── handlers.py      # イベントハンドラー
+│       │   ├── processing.py    # バックグラウンド処理
+│       │   └── constants.py     # 定数定義
+│       ├── core/                # コアプロセッサ
+│       │   └── processor.py     # 音声処理パイプライン
+│       └── utils/
+│           ├── __init__.py
+│           ├── logger.py        # ログ設定
+│           ├── time_utils.py    # 時間変換ユーティリティ
+│           └── file_utils.py    # ファイル操作ユーティリティ
 ├── config/
 │   ├── settings.yaml            # ユーザー設定
 │   └── fillers.yaml             # フィラー辞書
@@ -66,7 +76,7 @@ jetDR/
 │   ├── __init__.py
 │   ├── conftest.py              # pytest設定
 │   ├── test_segment.py          # Segmentテスト
-│   ├── test_fcp/                # [NEW] FCPモジュールテスト
+│   ├── test_fcp/                # FCPモジュールテスト (43テスト)
 │   │   ├── __init__.py
 │   │   ├── test_time_utils.py
 │   │   └── test_exporter.py
@@ -75,12 +85,15 @@ jetDR/
 │   ├── test_editor/
 │   └── test_davinci/
 ├── docs/
-│   └── davinci_resolve_auto_editor/
-│       ├── requirements.md
-│       ├── architecture.md
-│       ├── implementation_plan.md
-│       ├── task.md
-│       └── api_reference.md
+│   ├── davinci_resolve_auto_editor/
+│   │   ├── requirements.md
+│   │   ├── architecture.md
+│   │   ├── implementation_plan.md
+│   │   ├── task.md
+│   │   └── api_reference.md
+│   ├── gui/
+│   │   └── README.md            # GUIユーザーガイド
+│   └── fcp_module_implementation.md
 ├── pyproject.toml
 ├── README.md
 └── .gitignore

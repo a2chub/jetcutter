@@ -156,6 +156,9 @@ class BackgroundProcessor:
         editor: str,
     ) -> dict[str, Any]:
         """エクスポート処理"""
+        from loguru import logger
+
+        from jetcutter.audio.extractor import AudioExtractor
         from jetcutter.exporters import ExportConfig, create_exporter
         from jetcutter.exporters.base import FileExporter, LiveConnectionExporter
 
@@ -164,13 +167,30 @@ class BackgroundProcessor:
         # 出力ファイル名を生成
         timeline_name = f"{config.output.timeline_prefix}{video_path.stem}"
 
-        # ExportConfigを作成
+        # 動画のメタデータを取得（実際のFPSと解像度を使用）
+        extractor = AudioExtractor()
+        video_info = extractor.get_video_info(video_path)
+        actual_fps = video_info.get("fps", config.fps)
+        actual_width = video_info.get("width", config.output.default_width)
+        actual_height = video_info.get("height", config.output.default_height)
+
+        logger.info(f"[DEBUG] Video info: fps={actual_fps}, {actual_width}x{actual_height}")
+
+        # ExportConfigを作成（実際の動画のFPSと解像度を使用）
+        timecode_start_ms = video_info.get("timecode_start_ms", 0)
+        if timecode_start_ms > 0:
+            logger.info(f"[DEBUG] Video has non-zero timecode start: {timecode_start_ms}ms")
+
         export_config = ExportConfig(
             video_path=video_path,
             output_name=timeline_name,
-            fps=config.fps,
-            width=config.output.default_width,
-            height=config.output.default_height,
+            fps=actual_fps,
+            width=actual_width,
+            height=actual_height,
+            metadata={
+                "actual_duration_ms": video_info.get("duration_ms", 0),
+                "timecode_start_ms": timecode_start_ms,
+            },
         )
 
         # ファイルエクスポータの場合
