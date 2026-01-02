@@ -120,6 +120,11 @@ class JetCutterAppDelegate(NSObject):
         self.gui_state = None
         self.settings_controller = None
         self.processing_controller = None
+        # タブコントローラへの参照を保持（GC防止）
+        self.process_tab = None
+        self.settings_tab = None
+        self.results_tab = None
+        self.tab_view = None
 
         return self
 
@@ -152,48 +157,49 @@ class JetCutterAppDelegate(NSObject):
             self.processing_controller = ProcessingController(reporter=self.gui_state)
 
             # ========== タブコントローラの作成 ==========
+            # 参照を保持してGC防止（重要！）
 
             # ProcessTabController: 処理タブ
-            process_tab = ProcessTabController.alloc().initWithGUIState_settingsController_processingController_(
+            self.process_tab = ProcessTabController.alloc().initWithGUIState_settingsController_processingController_(
                 self.gui_state,
                 self.settings_controller,
                 self.processing_controller,
             )
 
             # SettingsTabController: 設定タブ
-            settings_tab = SettingsTabController.alloc().initWithSettingsController_(
+            self.settings_tab = SettingsTabController.alloc().initWithSettingsController_(
                 self.settings_controller
             )
 
             # ResultsTabController: 結果タブ
-            results_tab = ResultsTabController.alloc().initWithGUIState_(self.gui_state)
+            self.results_tab = ResultsTabController.alloc().initWithGUIState_(self.gui_state)
 
             # ========== NSTabViewの構築 ==========
 
             # タブビューを作成
-            tab_view = NSTabView.alloc().initWithFrame_(
+            self.tab_view = NSTabView.alloc().initWithFrame_(
                 NSMakeRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
             )
             # 自動リサイズマスクを設定（ウィンドウサイズに追従）
-            tab_view.setAutoresizingMask_(NSViewWidthSizable | NSViewHeightSizable)
+            self.tab_view.setAutoresizingMask_(NSViewWidthSizable | NSViewHeightSizable)
 
             # ProcessTabを追加
             process_tab_item = NSTabViewItem.alloc().initWithIdentifier_(TAB_PROCESS)
             process_tab_item.setLabel_(TAB_LABELS[TAB_PROCESS])
-            process_tab_item.setView_(process_tab.view)
-            tab_view.addTabViewItem_(process_tab_item)
+            process_tab_item.setView_(self.process_tab.view)
+            self.tab_view.addTabViewItem_(process_tab_item)
 
             # SettingsTabを追加
             settings_tab_item = NSTabViewItem.alloc().initWithIdentifier_(TAB_SETTINGS)
             settings_tab_item.setLabel_(TAB_LABELS[TAB_SETTINGS])
-            settings_tab_item.setView_(settings_tab.view)
-            tab_view.addTabViewItem_(settings_tab_item)
+            settings_tab_item.setView_(self.settings_tab.view)
+            self.tab_view.addTabViewItem_(settings_tab_item)
 
             # ResultsTabを追加
             results_tab_item = NSTabViewItem.alloc().initWithIdentifier_(TAB_RESULTS)
             results_tab_item.setLabel_(TAB_LABELS[TAB_RESULTS])
-            results_tab_item.setView_(results_tab.view)
-            tab_view.addTabViewItem_(results_tab_item)
+            results_tab_item.setView_(self.results_tab.view)
+            self.tab_view.addTabViewItem_(results_tab_item)
 
             # ========== ウィンドウの作成 ==========
 
@@ -211,7 +217,7 @@ class JetCutterAppDelegate(NSObject):
                 False,
             )
             self.window.setTitle_(WINDOW_TITLE)
-            self.window.setContentView_(tab_view)
+            self.window.setContentView_(self.tab_view)
             self.window.setMinSize_((WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT))
 
             # ウィンドウを中央に配置して表示
