@@ -1,6 +1,6 @@
 [project]
 name = "jetcutter"
-version = "0.1.0"
+version = "1.0.0"
 description = "DaVinci Resolve / Final Cut Pro 自動編集エージェント - 無音区間・フィラー自動検知・削除ツール"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -8,7 +8,7 @@ license = { text = "MIT" }
 authors = [{ name = "atusi" }]
 keywords = ["davinci-resolve", "final-cut-pro", "fcpxml", "video-editing", "automation", "jet-cut", "whisper"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
@@ -107,7 +107,7 @@ addopts = "-v --cov=jetcutter --cov-report=term-missing"
 [tool.briefcase]
 project_name = "JetCutter"
 bundle = "com.atusi.jetcutter"
-version = "0.1.0"
+version = "1.0.0"
 url = "https://github.com/a2chub/jetcutter"
 license.file = "LICENSE"
 author = "atusi"

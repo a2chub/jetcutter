@@ -133,6 +133,21 @@ a:hover {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.version-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  background: var(--accent-gradient);
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: var(--bg-primary);
+  background-clip: unset;
+  border-radius: 4px;
+  color: var(--bg-primary);
 }
 
 .nav {

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>更新履歴 - JetCutter</title>
+  <meta name="description" content="JetCutterの更新履歴・リリースノート">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .changelog-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .changelog-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding-top: 2rem;
+    }
+
+    .changelog-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .changelog-header p {
+      color: var(--text-secondary);
+    }
+
+    .version-section {
+      margin-bottom: 3rem;
+      padding: 2rem;
+      background: var(--bg-card);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .version-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .version-number {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .version-date {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .version-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      background: var(--accent-gradient);
+      color: var(--bg-primary);
+      border-radius: 4px;
+    }
+
+    .change-category {
+      margin-bottom: 1.5rem;
+    }
+
+    .change-category:last-child {
+      margin-bottom: 0;
+    }
+
+    .change-category h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent-secondary);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .change-category h3::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .change-category.added h3::before {
+      background: #22c55e;
+    }
+
+    .change-category.fixed h3::before {
+      background: #f59e0b;
+    }
+
+    .change-category.security h3::before {
+      background: #ef4444;
+    }
+
+    .change-category.changed h3::before {
+      background: #3b82f6;
+    }
+
+    .change-list {
+      list-style: none;
+      padding-left: 1rem;
+    }
+
+    .change-list li {
+      position: relative;
+      padding-left: 1rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .change-list li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--text-muted);
+    }
+
+    .change-list li strong {
+      color: var(--text-primary);
+    }
+
+    .change-sublist {
+      list-style: none;
+      padding-left: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .change-sublist li {
+      font-size: 0.9rem;
+    }
+
+    .change-sublist li::before {
+      content: '–';
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .back-link:hover {
+      color: var(--accent-primary);
+    }
+
+    .back-link svg {
+      width: 16px;
+      height: 16px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="index.html" class="logo">JetCutter <span class="version-badge">v1.0.0</span></a>
+        <nav class="nav">
+          <a href="index.html#features">機能</a>
+          <a href="index.html#install">インストール</a>
+          <a href="changelog.html">更新履歴</a>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSclqAiB2QDCLHZ7GEqP6jvQp5YoOK9ZNvAvPOaIei1_498cIA/viewform?usp=publish-editor" target="_blank" rel="noopener">お問い合わせ</a>
+          <a href="https://github.com/a2chub/jetcutter" target="_blank" rel="noopener">GitHub</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="changelog-container">
+      <a href="index.html" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        トップページへ戻る
+      </a>
+
+      <div class="changelog-header">
+        <h1>更新履歴</h1>
+        <p>JetCutterの全てのリリースと変更内容</p>
+      </div>
+
+      <!-- v1.0.0 -->
+      <section class="version-section">
+        <div class="version-header">
+          <span class="version-number">v1.0.0</span>
+          <span class="version-tag">Latest</span>
+          <span class="version-date">2026年1月2日</span>
+        </div>
+
+        <div class="change-category added">
+          <h3>追加機能</h3>
+          <ul class="change-list">
+            <li>
+              <strong>macOS ネイティブGUI</strong> - PyObjC + AppKitによるネイティブmacOSアプリケーション
+              <ul class="change-sublist">
+                <li>3タブ構成（処理・設定・結果）</li>
+                <li>リアルタイム進捗表示</li>
+                <li>処理時間表示（MM:SS.SS形式）</li>
+              </ul>
+            </li>
+            <li>
+              <strong>Final Cut Pro対応</strong> - FCPXML v1.10形式でのタイムライン出力
+              <ul class="change-sublist">
+                <li>DTD完全準拠</li>
+                <li>DJIドローン等の非標準タイムコード対応</li>
+                <li>自動FPS検出</li>
+              </ul>
+            </li>
+            <li><strong>DaVinci Resolve対応</strong> - Scripting APIによる直接連携（Studio版必須）</li>
+            <li>
+              <strong>無音区間自動検知</strong> - pydubによる音量ベースの無音検知
+              <ul class="change-sublist">
+                <li>しきい値設定可能（デフォルト: -40dB）</li>
+                <li>最小無音時間設定可能（デフォルト: 300ms）</li>
+              </ul>
+            </li>
+            <li>
+              <strong>フィラー自動検知</strong> - faster-whisperによるAI音声認識
+              <ul class="change-sublist">
+                <li>日本語フィラー対応（「あー」「えっと」「まあ」等）</li>
+                <li>カスタム辞書対応</li>
+                <li>GPU/CPU自動選択</li>
+              </ul>
+            </li>
+            <li>
+              <strong>CLIツール</strong> - typerによるコマンドラインインターフェース
+              <ul class="change-sublist">
+                <li><code>jetcutter gui</code> - GUIアプリ起動</li>
+                <li><code>jetcutter process</code> - 動画処理</li>
+                <li><code>jetcutter analyze</code> - 解析のみ</li>
+                <li><code>jetcutter export</code> - FCPXML出力</li>
+                <li><code>jetcutter validate</code> - FCPXML検証</li>
+              </ul>
+            </li>
+            <li><strong>Briefcaseパッケージング</strong> - macOS .appバンドル生成対応</li>
+            <li><strong>ランディングページ</strong> - GitHub Pages対応のプロダクトサイト</li>
+          </ul>
+        </div>
+
+        <div class="change-category fixed">
+          <h3>修正</h3>
+          <ul class="change-list">
+            <li>タブ切り替え問題（SettingsTabControllerに@propertyデコレータが欠落）</li>
+            <li>マルチプロセス新規ウィンドウ問題（multiprocessing開始方式をspawn→forkに変更）</li>
+            <li>FCPXML 1.10 DTD準拠修正（media-rep要素使用、format name属性必須）</li>
+            <li>GUIデッドロック問題（threading.Lock→RLockに変更）</li>
+          </ul>
+        </div>
+
+        <div class="change-category security">
+          <h3>セキュリティ</h3>
+          <ul class="change-list">
+            <li>ffmpegバイナリのパス解決をバンドル版とシステム版で分離</li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <p class="footer-logo">JetCutter</p>
+        <p class="footer-tagline">AI動画自動編集エージェント</p>
+        <div class="footer-links">
+          <a href="https://github.com/a2chub/jetcutter" target="_blank" rel="noopener">GitHub</a>
+          <span>|</span>
+          <a href="changelog.html">更新履歴</a>
+          <span>|</span>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSclqAiB2QDCLHZ7GEqP6jvQp5YoOK9ZNvAvPOaIei1_498cIA/viewform?usp=publish-editor" target="_blank" rel="noopener">お問い合わせ</a>
+          <span>|</span>
+          <a href="https://github.com/a2chub/jetcutter/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+        </div>
+        <p class="footer-credit">Made with love for video creators</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
