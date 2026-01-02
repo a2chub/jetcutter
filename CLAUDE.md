@@ -141,10 +141,15 @@ Core docs in `docs/davinci_resolve_auto_editor/`:
 1. **PySimpleGUI4の制約**
    - `write_event_value`を使用してスレッド間通信
    - Tkinterウィジェットの直接操作が必要な場合あり
+   - `disabled=True`でRadio/Inputが非表示になるバグあり → 無効化処理を避ける
 
 2. **バックグラウンド処理**
    - 長時間処理は別スレッドで実行
    - `threading.Event`でキャンセル処理を実装
+
+3. **UI設計**
+   - 処理中もUI要素を表示維持（バリデーション済みなので操作は無視）
+   - 処理時間は結果タブに`MM:SS.SS`形式で表示
 
 ## Project Status
 
@@ -163,3 +168,6 @@ Core docs in `docs/davinci_resolve_auto_editor/`:
 - ✅ DJIタイムコード対応
 - ✅ 自動FPS検出
 - ✅ `jetcutter gui` CLIコマンド追加
+- ✅ GUI: 出力モード表記変更（FCPX/DR）
+- ✅ GUI: 処理中のUI消失バグ修正
+- ✅ GUI: 処理時間表示機能追加
