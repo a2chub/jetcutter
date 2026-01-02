@@ -11,6 +11,7 @@ import sys
 
 import objc
 from AppKit import (
+    NSAlert,
     NSApplication,
     NSApplicationActivationPolicyRegular,
     NSBackingStoreBuffered,
@@ -62,8 +63,6 @@ def check_ffmpeg() -> bool:
 
 def show_ffmpeg_error() -> None:
     """ffmpeg未インストールエラーを表示"""
-    from AppKit import NSAlert
-
     alert = NSAlert.alloc().init()
     alert.setMessageText_("ffmpegが見つかりません")
     alert.setInformativeText_(
@@ -93,6 +92,15 @@ def create_menu_bar() -> NSMenu:
 
     app_menu = NSMenu.alloc().init()
     app_menu_item.setSubmenu_(app_menu)
+
+    # About メニュー項目
+    about_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_(
+        f"About {WINDOW_TITLE}", "showAboutPanel:", ""
+    )
+    app_menu.addItem_(about_item)
+
+    # セパレータ
+    app_menu.addItem_(NSMenuItem.separatorItem())
 
     # Quit メニュー項目
     quit_item = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_(
@@ -237,8 +245,6 @@ class JetCutterAppDelegate(NSObject):
             traceback.print_exc()
 
             # エラーダイアログを表示
-            from AppKit import NSAlert
-
             alert = NSAlert.alloc().init()
             alert.setMessageText_("起動エラー")
             alert.setInformativeText_(f"アプリケーションの起動に失敗しました:\n\n{e}")
@@ -255,6 +261,36 @@ class JetCutterAppDelegate(NSObject):
             常にTrue
         """
         return True
+
+    @objc.IBAction
+    def showAboutPanel_(self, sender) -> None:
+        """
+        Aboutダイアログを表示
+
+        アプリケーションのバージョン情報とライセンス情報を表示。
+        """
+        from jetcutter import __version__
+
+        about_text = f"""JetCutter v{__version__}
+
+DaVinci Resolve / Final Cut Pro 向け
+自動編集エージェント
+
+無音区間・フィラー自動検知・削除ツール
+
+Copyright (c) 2024 JetCutter Contributors
+Licensed under MIT License
+
+PySimpleGUI4 is licensed under LGPL-3.0.
+詳細は THIRD_PARTY_LICENSES.md をご確認ください。
+
+https://github.com/a2chub/jetcutter"""
+
+        alert = NSAlert.alloc().init()
+        alert.setMessageText_(f"About {WINDOW_TITLE}")
+        alert.setInformativeText_(about_text)
+        alert.addButtonWithTitle_("OK")
+        alert.runModal()
 
 
 def main() -> int:

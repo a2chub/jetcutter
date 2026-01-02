@@ -179,7 +179,7 @@
   <header class="header">
     <div class="container">
       <div class="header-content">
-        <a href="index.html" class="logo">JetCutter <span class="version-badge">v1.0.0</span></a>
+        <a href="index.html" class="logo">JetCutter <span class="version-badge">v1.1.0</span></a>
         <nav class="nav">
           <a href="index.html#features">機能</a>
           <a href="index.html#install">インストール</a>
@@ -205,11 +205,48 @@
         <p>JetCutterの全てのリリースと変更内容</p>
       </div>
 
+      <!-- v1.1.0 -->
+      <section class="version-section">
+        <div class="version-header">
+          <span class="version-number">v1.1.0</span>
+          <span class="version-tag">Latest</span>
+          <span class="version-date">2026年1月2日</span>
+        </div>
+
+        <div class="change-category added">
+          <h3>追加機能</h3>
+          <ul class="change-list">
+            <li>
+              <strong>Aboutダイアログ</strong> - アプリケーションメニューに「About JetCutter」を追加
+              <ul class="change-sublist">
+                <li>バージョン情報表示</li>
+                <li>ライセンス情報表示</li>
+                <li>GitHubリポジトリへのリンク</li>
+              </ul>
+            </li>
+            <li>
+              <strong>ライセンスコンプライアンス対応</strong> - DMG配布に必要なライセンス文書を整備
+              <ul class="change-sublist">
+                <li>LICENSES/フォルダにMIT, LGPL-3.0, GPL-3.0全文を追加</li>
+                <li>THIRD_PARTY_LICENSES.mdで全依存パッケージの帰属表示を記載</li>
+                <li>PySimpleGUI4のLGPL-3.0遵守要件を明示</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="change-category changed">
+          <h3>変更点</h3>
+          <ul class="change-list">
+            <li>pyproject.tomlのBriefcase設定でライセンスファイルをバンドルに含めるよう更新</li>
+          </ul>
+        </div>
+      </section>
+
       <!-- v1.0.0 -->
       <section class="version-section">
         <div class="version-header">
           <span class="version-number">v1.0.0</span>
-          <span class="version-tag">Latest</span>
           <span class="version-date">2026年1月2日</span>
         </div>
 
