@@ -46,7 +46,8 @@ class GUIState:
         self._processing_state = ProcessingState()
         self._result: AudioProcessingResult | None = None
         self._observers: list[GUIStateObserver] = []
-        self._lock = threading.Lock()
+        # RLockを使用して再入可能なロックにする（デッドロック防止）
+        self._lock = threading.RLock()
         self._is_cancelled = False
 
     @property

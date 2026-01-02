@@ -21,6 +21,14 @@ if TYPE_CHECKING:
     from jetcutter.core.processor import AudioProcessingResult
     from jetcutter.gui.protocols import ProgressReporterProtocol
 
+# processor.pyのステージ名からGUIのステージ名へのマッピング
+PROCESSOR_STAGE_MAP = {
+    "Extracting audio...": "extract",
+    "Detecting silence...": "silence",
+    "Detecting fillers...": "transcribe",  # フィラー検知は文字起こしを含む
+    "Calculating keep segments...": "merge",
+}
+
 
 class NativeProgressCallback:
     """
@@ -38,8 +46,11 @@ class NativeProgressCallback:
 
     def on_stage_start(self, stage: str) -> None:
         """ステージ開始時に呼ばれる"""
-        progress = STAGE_PROGRESS.get(stage, 0)
-        dispatch_to_main_thread(lambda: self._reporter.report_stage(stage, progress))
+        # processor.pyのステージ名をGUIのステージ名に変換
+        gui_stage = PROCESSOR_STAGE_MAP.get(stage, stage)
+        progress = STAGE_PROGRESS.get(gui_stage, 0)
+        logger.debug(f"Stage started: {stage} -> {gui_stage} ({progress}%)")
+        dispatch_to_main_thread(lambda: self._reporter.report_stage(gui_stage, progress))
 
     def on_stage_complete(self, stage: str) -> None:
         """ステージ完了時に呼ばれる"""
