@@ -2,6 +2,7 @@
 settings_tab - 設定タブ
 
 無音検知、フィラー検知、マージン、一般設定のUI要素を配置。
+Apple Human Interface Guidelines準拠。
 """
 
 from AppKit import (
@@ -18,19 +19,52 @@ from AppKit import (
 )
 from Foundation import NSMakeRect
 
+# Apple HIG準拠の定数
+MARGIN = 20
+SECTION_SPACING = 24
+ITEM_SPACING = 8
+ROW_HEIGHT = 26
+LABEL_WIDTH = 130
+FIELD_WIDTH = 80
+BUTTON_HEIGHT = 32
 
-def create_label(text: str, x: float, y: float, width: float, bold: bool = False) -> NSTextField:
-    """ラベルを作成"""
-    label = NSTextField.alloc().initWithFrame_(NSMakeRect(x, y, width, 20))
+
+def create_section_label(text: str, x: float, y: float, width: float) -> NSTextField:
+    """セクション見出しラベルを作成（太字・大きめ）"""
+    label = NSTextField.alloc().initWithFrame_(NSMakeRect(x, y, width, 17))
     label.setStringValue_(text)
     label.setBezeled_(False)
     label.setDrawsBackground_(False)
     label.setEditable_(False)
     label.setSelectable_(False)
-    if bold:
-        label.setFont_(NSFont.boldSystemFontOfSize_(13))
-    else:
-        label.setFont_(NSFont.systemFontOfSize_(13))
+    label.setFont_(NSFont.boldSystemFontOfSize_(13))
+    label.setTextColor_(NSColor.labelColor())
+    return label
+
+
+def create_label(text: str, x: float, y: float, width: float) -> NSTextField:
+    """通常ラベルを作成"""
+    label = NSTextField.alloc().initWithFrame_(NSMakeRect(x, y, width, 17))
+    label.setStringValue_(text)
+    label.setBezeled_(False)
+    label.setDrawsBackground_(False)
+    label.setEditable_(False)
+    label.setSelectable_(False)
+    label.setFont_(NSFont.systemFontOfSize_(13))
+    label.setTextColor_(NSColor.labelColor())
+    return label
+
+
+def create_value_label(text: str, x: float, y: float, width: float) -> NSTextField:
+    """値表示用ラベルを作成（右寄せ可能）"""
+    label = NSTextField.alloc().initWithFrame_(NSMakeRect(x, y, width, 17))
+    label.setStringValue_(text)
+    label.setBezeled_(False)
+    label.setDrawsBackground_(False)
+    label.setEditable_(False)
+    label.setSelectable_(False)
+    label.setFont_(NSFont.monospacedDigitSystemFontOfSize_weight_(13, 0.0))
+    label.setTextColor_(NSColor.secondaryLabelColor())
     return label
 
 
@@ -42,12 +76,14 @@ def create_text_field(x: float, y: float, width: float, value: str = "") -> NSTe
     return field
 
 
-def create_button(title: str, x: float, y: float, width: float = 120) -> NSButton:
+def create_button(title: str, x: float, y: float, width: float = 120, primary: bool = False) -> NSButton:
     """ボタンを作成"""
-    button = NSButton.alloc().initWithFrame_(NSMakeRect(x, y, width, 32))
+    button = NSButton.alloc().initWithFrame_(NSMakeRect(x, y, width, BUTTON_HEIGHT))
     button.setTitle_(title)
     button.setBezelStyle_(NSBezelStyleRounded)
     button.setFont_(NSFont.systemFontOfSize_(13))
+    if primary:
+        button.setKeyEquivalent_("\r")
     return button
 
 
@@ -82,115 +118,143 @@ def create_settings_tab(width: float, height: float) -> NSView:
     """設定タブを作成"""
     view = NSView.alloc().initWithFrame_(NSMakeRect(0, 0, width, height))
 
-    y = height - 40
-    margin = 20
-    content_width = width - margin * 2
-    label_width = 140
+    content_width = width - MARGIN * 2
+    y = height - MARGIN - 10
+    field_x = MARGIN + LABEL_WIDTH + 8
 
-    # 無音検知セクション
-    section_label = create_label("無音検知", margin, y, 200, bold=True)
+    # ========== 無音検知セクション ==========
+    section_label = create_section_label("無音検知", MARGIN, y, 200)
     view.addSubview_(section_label)
 
-    y -= 30
-    threshold_label = create_label("しきい値 (dB):", margin, y, label_width)
+    # しきい値
+    y -= ITEM_SPACING + ROW_HEIGHT
+    threshold_label = create_label("しきい値 (dB):", MARGIN, y + 2, LABEL_WIDTH)
     view.addSubview_(threshold_label)
 
-    threshold_slider = create_slider(margin + label_width, y, 200, -80, 0, -40)
+    threshold_slider = create_slider(field_x, y, 180, -80, 0, -40)
     view.addSubview_(threshold_slider)
 
-    threshold_value = create_label("-40 dB", margin + label_width + 210, y, 60)
+    threshold_value = create_value_label("-40 dB", field_x + 190, y + 2, 60)
     view.addSubview_(threshold_value)
 
-    y -= 30
-    min_silence_label = create_label("最小無音時間 (ms):", margin, y, label_width)
+    # 最小無音時間
+    y -= ITEM_SPACING + ROW_HEIGHT
+    min_silence_label = create_label("最小無音時間:", MARGIN, y + 2, LABEL_WIDTH)
     view.addSubview_(min_silence_label)
 
-    min_silence_field = create_text_field(margin + label_width, y, 80, "300")
+    min_silence_field = create_text_field(field_x, y, FIELD_WIDTH, "300")
     view.addSubview_(min_silence_field)
 
+    ms_label = create_label("ms", field_x + FIELD_WIDTH + 8, y + 2, 30)
+    view.addSubview_(ms_label)
+
     # 区切り線
-    y -= 25
-    separator1 = create_separator(margin, y, content_width)
+    y -= SECTION_SPACING
+    separator1 = create_separator(MARGIN, y, content_width)
     view.addSubview_(separator1)
 
-    # フィラー検知セクション
-    y -= 30
-    filler_label = create_label("フィラー検知", margin, y, 200, bold=True)
+    # ========== フィラー検知セクション ==========
+    y -= SECTION_SPACING
+    filler_label = create_section_label("フィラー検知", MARGIN, y, 200)
     view.addSubview_(filler_label)
 
-    y -= 30
-    model_label = create_label("モデル:", margin, y, label_width)
+    # モデル
+    y -= ITEM_SPACING + ROW_HEIGHT
+    model_label = create_label("Whisperモデル:", MARGIN, y + 2, LABEL_WIDTH)
     view.addSubview_(model_label)
 
-    model_popup = create_popup(["tiny", "base", "small", "medium", "large-v3"], margin + label_width, y, 150, 4)
+    model_popup = create_popup(
+        ["tiny", "base", "small", "medium", "large-v3"],
+        field_x, y, 140, 4
+    )
     view.addSubview_(model_popup)
 
-    y -= 30
-    lang_label = create_label("言語:", margin, y, label_width)
+    # 言語
+    y -= ITEM_SPACING + ROW_HEIGHT
+    lang_label = create_label("言語:", MARGIN, y + 2, LABEL_WIDTH)
     view.addSubview_(lang_label)
 
-    lang_popup = create_popup(["日本語", "英語", "中国語", "韓国語"], margin + label_width, y, 150, 0)
+    lang_popup = create_popup(
+        ["日本語", "English", "中文", "한국어"],
+        field_x, y, 140, 0
+    )
     view.addSubview_(lang_popup)
 
-    y -= 30
-    device_label = create_label("デバイス:", margin, y, label_width)
+    # デバイス
+    y -= ITEM_SPACING + ROW_HEIGHT
+    device_label = create_label("演算デバイス:", MARGIN, y + 2, LABEL_WIDTH)
     view.addSubview_(device_label)
 
-    device_popup = create_popup(["auto", "cuda", "cpu"], margin + label_width, y, 150, 0)
+    device_popup = create_popup(["自動", "CUDA (GPU)", "CPU"], field_x, y, 140, 0)
     view.addSubview_(device_popup)
 
     # 区切り線
-    y -= 25
-    separator2 = create_separator(margin, y, content_width)
+    y -= SECTION_SPACING
+    separator2 = create_separator(MARGIN, y, content_width)
     view.addSubview_(separator2)
 
-    # マージンセクション
-    y -= 30
-    margin_section_label = create_label("マージン", margin, y, 200, bold=True)
+    # ========== マージンセクション ==========
+    y -= SECTION_SPACING
+    margin_section_label = create_section_label("セグメントマージン", MARGIN, y, 200)
     view.addSubview_(margin_section_label)
 
-    y -= 30
-    before_label = create_label("前マージン (ms):", margin, y, label_width)
+    # マージン行
+    y -= ITEM_SPACING + ROW_HEIGHT
+    before_label = create_label("前:", MARGIN, y + 2, 30)
     view.addSubview_(before_label)
 
-    before_field = create_text_field(margin + label_width, y, 80, "100")
+    before_field = create_text_field(MARGIN + 35, y, 60, "100")
     view.addSubview_(before_field)
 
-    after_label = create_label("後マージン (ms):", margin + label_width + 100, y, label_width)
+    ms1_label = create_label("ms", MARGIN + 100, y + 2, 30)
+    view.addSubview_(ms1_label)
+
+    after_label = create_label("後:", MARGIN + 160, y + 2, 30)
     view.addSubview_(after_label)
 
-    after_field = create_text_field(margin + label_width * 2 + 100, y, 80, "100")
+    after_field = create_text_field(MARGIN + 195, y, 60, "100")
     view.addSubview_(after_field)
 
+    ms2_label = create_label("ms", MARGIN + 260, y + 2, 30)
+    view.addSubview_(ms2_label)
+
     # 区切り線
-    y -= 25
-    separator3 = create_separator(margin, y, content_width)
+    y -= SECTION_SPACING
+    separator3 = create_separator(MARGIN, y, content_width)
     view.addSubview_(separator3)
 
-    # 一般セクション
-    y -= 30
-    general_label = create_label("一般", margin, y, 200, bold=True)
+    # ========== 一般セクション ==========
+    y -= SECTION_SPACING
+    general_label = create_section_label("一般", MARGIN, y, 200)
     view.addSubview_(general_label)
 
-    y -= 30
-    fps_label = create_label("FPS:", margin, y, label_width)
+    # FPSと最小保持時間
+    y -= ITEM_SPACING + ROW_HEIGHT
+    fps_label = create_label("FPS:", MARGIN, y + 2, 40)
     view.addSubview_(fps_label)
 
-    fps_field = create_text_field(margin + label_width, y, 80, "29.97")
+    fps_field = create_text_field(MARGIN + 45, y, 70, "29.97")
     view.addSubview_(fps_field)
 
-    min_keep_label = create_label("最小保持時間 (ms):", margin + label_width + 100, y, label_width)
+    min_keep_label = create_label("最小保持時間:", MARGIN + 160, y + 2, 100)
     view.addSubview_(min_keep_label)
 
-    min_keep_field = create_text_field(margin + label_width * 2 + 100, y, 80, "500")
+    min_keep_field = create_text_field(MARGIN + 265, y, 60, "500")
     view.addSubview_(min_keep_field)
 
-    # ボタン（下部中央）
-    button_y = 30
-    default_btn = create_button("デフォルトに戻す", width / 2 - 140, button_y)
+    ms3_label = create_label("ms", MARGIN + 330, y + 2, 30)
+    view.addSubview_(ms3_label)
+
+    # ========== アクションボタン ==========
+    button_y = MARGIN
+    button_width = 130
+
+    # デフォルトに戻す（左寄り）
+    default_btn = create_button("デフォルトに戻す", MARGIN, button_y, button_width)
     view.addSubview_(default_btn)
 
-    save_btn = create_button("設定を保存", width / 2 + 20, button_y)
+    # 設定を保存（右寄り、プライマリ）
+    save_btn = create_button("設定を保存", width - MARGIN - button_width, button_y, button_width, primary=True)
     view.addSubview_(save_btn)
 
     return view

@@ -2,6 +2,7 @@
 results_tab - 結果タブ
 
 処理結果のサマリーとセグメント一覧を表示。
+Apple Human Interface Guidelines準拠。
 """
 
 import objc
@@ -19,19 +20,36 @@ from AppKit import (
 )
 from Foundation import NSMakeRect, NSObject
 
+# Apple HIG準拠の定数
+MARGIN = 20
+SECTION_SPACING = 20
+ITEM_SPACING = 8
+ROW_HEIGHT = 26
 
-def create_label(text: str, x: float, y: float, width: float, bold: bool = False) -> NSTextField:
-    """ラベルを作成"""
-    label = NSTextField.alloc().initWithFrame_(NSMakeRect(x, y, width, 20))
+
+def create_section_label(text: str, x: float, y: float, width: float) -> NSTextField:
+    """セクション見出しラベルを作成（太字・大きめ）"""
+    label = NSTextField.alloc().initWithFrame_(NSMakeRect(x, y, width, 17))
     label.setStringValue_(text)
     label.setBezeled_(False)
     label.setDrawsBackground_(False)
     label.setEditable_(False)
     label.setSelectable_(False)
-    if bold:
-        label.setFont_(NSFont.boldSystemFontOfSize_(13))
-    else:
-        label.setFont_(NSFont.systemFontOfSize_(13))
+    label.setFont_(NSFont.boldSystemFontOfSize_(13))
+    label.setTextColor_(NSColor.labelColor())
+    return label
+
+
+def create_label(text: str, x: float, y: float, width: float) -> NSTextField:
+    """通常ラベルを作成"""
+    label = NSTextField.alloc().initWithFrame_(NSMakeRect(x, y, width, 17))
+    label.setStringValue_(text)
+    label.setBezeled_(False)
+    label.setDrawsBackground_(False)
+    label.setEditable_(False)
+    label.setSelectable_(False)
+    label.setFont_(NSFont.systemFontOfSize_(13))
+    label.setTextColor_(NSColor.labelColor())
     return label
 
 
@@ -41,7 +59,7 @@ def create_readonly_field(x: float, y: float, width: float, value: str = "") -> 
     field.setStringValue_(value)
     field.setEditable_(False)
     field.setSelectable_(True)
-    field.setFont_(NSFont.systemFontOfSize_(13))
+    field.setFont_(NSFont.monospacedDigitSystemFontOfSize_weight_(13, 0.0))
     field.setBackgroundColor_(NSColor.controlBackgroundColor())
     return field
 
@@ -84,94 +102,105 @@ def create_results_tab(width: float, height: float) -> NSView:
     """結果タブを作成"""
     view = NSView.alloc().initWithFrame_(NSMakeRect(0, 0, width, height))
 
-    y = height - 40
-    margin = 20
-    content_width = width - margin * 2
+    content_width = width - MARGIN * 2
+    y = height - MARGIN - 10
 
-    # 処理結果セクション
-    section_label = create_label("処理結果", margin, y, 200, bold=True)
+    # ========== 処理結果セクション ==========
+    section_label = create_section_label("処理結果", MARGIN, y, 200)
     view.addSubview_(section_label)
 
     # 区切り線
-    y -= 15
-    separator1 = create_separator(margin, y, content_width)
+    y -= 12
+    separator1 = create_separator(MARGIN, y, content_width)
     view.addSubview_(separator1)
 
-    # サマリー行1
-    y -= 35
-    col1_x = margin
-    col2_x = margin + 180
-    col3_x = margin + 360
+    # サマリーレイアウト: 3列構成
+    y -= SECTION_SPACING + 4
 
-    total_label = create_label("総時間:", col1_x, y, 60)
+    # 列の位置を計算
+    col_width = content_width // 3
+    col1_x = MARGIN
+    col2_x = MARGIN + col_width
+    col3_x = MARGIN + col_width * 2
+
+    label_w = 70
+    field_w = 80
+
+    # 行1: 総時間、削減時間、削減率
+    total_label = create_label("総時間:", col1_x, y, label_w)
     view.addSubview_(total_label)
-    total_field = create_readonly_field(col1_x + 65, y, 80, "00:12.52")
+    total_field = create_readonly_field(col1_x + label_w, y - 2, field_w, "00:12.52")
     view.addSubview_(total_field)
 
-    cut_label = create_label("削減時間:", col2_x, y, 70)
+    cut_label = create_label("削減時間:", col2_x, y, label_w)
     view.addSubview_(cut_label)
-    cut_field = create_readonly_field(col2_x + 75, y, 80, "00:01.40")
+    cut_field = create_readonly_field(col2_x + label_w, y - 2, field_w, "00:01.40")
     view.addSubview_(cut_field)
 
-    ratio_label = create_label("削減率:", col3_x, y, 60)
+    ratio_label = create_label("削減率:", col3_x, y, label_w)
     view.addSubview_(ratio_label)
-    ratio_field = create_readonly_field(col3_x + 65, y, 60, "11.2%")
+    ratio_field = create_readonly_field(col3_x + label_w, y - 2, 60, "11.2%")
     view.addSubview_(ratio_field)
 
-    # サマリー行2
-    y -= 30
-    silence_label = create_label("無音区間:", col1_x, y, 70)
+    # 行2: 無音区間、フィラー、保持区間
+    y -= ROW_HEIGHT + ITEM_SPACING
+    silence_label = create_label("無音区間:", col1_x, y, label_w)
     view.addSubview_(silence_label)
-    silence_field = create_readonly_field(col1_x + 75, y, 50, "3")
+    silence_field = create_readonly_field(col1_x + label_w, y - 2, 50, "3")
     view.addSubview_(silence_field)
 
-    filler_label = create_label("フィラー:", col2_x, y, 60)
+    filler_label = create_label("フィラー:", col2_x, y, label_w)
     view.addSubview_(filler_label)
-    filler_field = create_readonly_field(col2_x + 65, y, 50, "2")
+    filler_field = create_readonly_field(col2_x + label_w, y - 2, 50, "2")
     view.addSubview_(filler_field)
 
-    keep_label = create_label("保持区間:", col3_x, y, 70)
+    keep_label = create_label("保持区間:", col3_x, y, label_w)
     view.addSubview_(keep_label)
-    keep_field = create_readonly_field(col3_x + 75, y, 50, "4")
+    keep_field = create_readonly_field(col3_x + label_w, y - 2, 50, "4")
     view.addSubview_(keep_field)
 
-    # サマリー行3（処理時間）
-    y -= 30
-    proc_time_label = create_label("処理時間:", col1_x, y, 70)
+    # 行3: 処理時間
+    y -= ROW_HEIGHT + ITEM_SPACING
+    proc_time_label = create_label("処理時間:", col1_x, y, label_w)
     view.addSubview_(proc_time_label)
-    proc_time_field = create_readonly_field(col1_x + 75, y, 80, "00:22.35")
+    proc_time_field = create_readonly_field(col1_x + label_w, y - 2, field_w, "00:22.35")
     view.addSubview_(proc_time_field)
 
     # 区切り線
-    y -= 20
-    separator2 = create_separator(margin, y, content_width)
+    y -= SECTION_SPACING
+    separator2 = create_separator(MARGIN, y, content_width)
     view.addSubview_(separator2)
 
-    # セグメント一覧セクション
-    y -= 30
-    segment_label = create_label("検出セグメント", margin, y, 200, bold=True)
+    # ========== 検出セグメントセクション ==========
+    y -= SECTION_SPACING
+    segment_label = create_section_label("検出セグメント", MARGIN, y, 200)
     view.addSubview_(segment_label)
 
     # テーブルビュー
-    y -= 10
-    table_height = y - 20
+    y -= 8
+    table_height = y - MARGIN
 
-    scroll_view = NSScrollView.alloc().initWithFrame_(NSMakeRect(margin, 20, content_width, table_height))
+    scroll_view = NSScrollView.alloc().initWithFrame_(
+        NSMakeRect(MARGIN, MARGIN, content_width, table_height)
+    )
     scroll_view.setBorderType_(NSBezelBorder)
     scroll_view.setHasVerticalScroller_(True)
     scroll_view.setHasHorizontalScroller_(False)
 
-    table_view = NSTableView.alloc().initWithFrame_(NSMakeRect(0, 0, content_width - 20, table_height))
+    table_view = NSTableView.alloc().initWithFrame_(
+        NSMakeRect(0, 0, content_width - 20, table_height)
+    )
     table_view.setUsesAlternatingRowBackgroundColors_(True)
     table_view.setGridStyleMask_(1)  # Horizontal grid
+    table_view.setRowHeight_(22)
 
-    # カラム定義
+    # カラム定義（幅を調整してバランスを改善）
     columns = [
-        ("#", 40),
-        ("種別", 80),
-        ("開始", 100),
-        ("終了", 100),
-        ("長さ", 100),
+        ("#", 35),
+        ("種別", 70),
+        ("開始", 90),
+        ("終了", 90),
+        ("長さ", 90),
     ]
 
     for col_id, col_width in columns:
@@ -188,6 +217,11 @@ def create_results_tab(width: float, height: float) -> NSView:
     view.addSubview_(scroll_view)
 
     # データソースを保持（ガベージコレクション防止）
-    view._data_source = data_source
+    global _data_source_ref
+    _data_source_ref = data_source
 
     return view
+
+
+# データソース参照を保持するグローバル変数
+_data_source_ref = None

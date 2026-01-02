@@ -30,6 +30,7 @@ WINDOW_HEIGHT = 550
 
 def create_main_window() -> NSWindow:
     """メインウィンドウを作成"""
+    print("  Creating window style mask...")
     # ウィンドウスタイル
     style_mask = (
         NSWindowStyleMaskTitled
@@ -38,6 +39,7 @@ def create_main_window() -> NSWindow:
         | NSWindowStyleMaskResizable
     )
 
+    print("  Creating NSWindow...")
     # ウィンドウ作成
     window = NSWindow.alloc().initWithContentRect_styleMask_backing_defer_(
         NSMakeRect(200, 200, WINDOW_WIDTH, WINDOW_HEIGHT),
@@ -45,9 +47,11 @@ def create_main_window() -> NSWindow:
         NSBackingStoreBuffered,
         False,
     )
+    print(f"  NSWindow created: {window}")
     window.setTitle_("JetCutter")
     window.setMinSize_((600, 450))
 
+    print("  Creating tab view...")
     # タブビュー作成
     tab_view = NSTabView.alloc().initWithFrame_(
         NSMakeRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT - 20)
@@ -58,25 +62,30 @@ def create_main_window() -> NSWindow:
     tab_content_width = WINDOW_WIDTH - 20
     tab_content_height = WINDOW_HEIGHT - 80
 
+    print("  Creating process tab...")
     # 処理タブ
     process_tab_item = NSTabViewItem.alloc().initWithIdentifier_("process")
     process_tab_item.setLabel_("処理")
     process_tab_item.setView_(create_process_tab(tab_content_width, tab_content_height))
     tab_view.addTabViewItem_(process_tab_item)
 
+    print("  Creating settings tab...")
     # 設定タブ
     settings_tab_item = NSTabViewItem.alloc().initWithIdentifier_("settings")
     settings_tab_item.setLabel_("設定")
     settings_tab_item.setView_(create_settings_tab(tab_content_width, tab_content_height))
     tab_view.addTabViewItem_(settings_tab_item)
 
+    print("  Creating results tab...")
     # 結果タブ
     results_tab_item = NSTabViewItem.alloc().initWithIdentifier_("results")
     results_tab_item.setLabel_("結果")
     results_tab_item.setView_(create_results_tab(tab_content_width, tab_content_height))
     tab_view.addTabViewItem_(results_tab_item)
 
+    print("  Adding tab view to window...")
     # コンテンツビューに追加
     window.contentView().addSubview_(tab_view)
 
+    print("  Window creation complete")
     return window
